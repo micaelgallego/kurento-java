@@ -12,8 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.internal.ParamAnnotationUtils;
 import org.kurento.client.internal.RemoteClass;
 import org.kurento.client.internal.client.RemoteObject;
@@ -23,6 +22,8 @@ import org.kurento.client.internal.server.ProtocolException;
 import org.kurento.client.internal.server.RemoteObjectManager;
 import org.kurento.jsonrpc.Prop;
 import org.kurento.jsonrpc.Props;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ParamsFlattener {
 
@@ -118,8 +119,9 @@ public class ParamsFlattener {
 		}
 
 		Object processedParam;
-		if (param instanceof RemoteObject) {
-			processedParam = ((RemoteObject) param).getObjectRef();
+		if (param instanceof AbstractMediaObject) {
+			processedParam = ((AbstractMediaObject) param).getRemoteObject()
+					.getObjectRef();
 		} else if (param instanceof Proxy) {
 
 			InvocationHandler handler = Proxy.getInvocationHandler(param);

@@ -263,7 +263,8 @@ public class RomClientJsonRpcClient extends RomClient {
 			throw new KurentoServerTransportException(
 					"Error connecting with server", e);
 		} catch (JsonRpcErrorException e) {
-			throw new KurentoServerException("Exception invoking the ", e);
+			throw new KurentoServerException(
+					"Exception invoking an operation in KMS", e);
 		}
 	}
 
