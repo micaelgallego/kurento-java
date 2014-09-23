@@ -14,9 +14,8 @@ import com.google.common.reflect.TypeToken;
 @RemoteClass
 public class SampleRemoteClass extends AbstractMediaObject {
 
-	public SampleRemoteClass(RemoteObject remoteObject,
-			RomManager manager) {
-		super(remoteObject, manager);
+	public SampleRemoteClass(RemoteObject remoteObject) {
+		super(remoteObject);
 	}
 
 	public void methodReturnVoid() {

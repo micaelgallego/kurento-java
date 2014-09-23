@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.RemoteObject;
+import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.commons.exception.KurentoException;
 import org.kurento.jsonrpc.Props;
@@ -33,7 +34,7 @@ public class AbstractBuilder<T> {
 
 		this.props = new Props();
 		this.clazz = clazz;
-		this.manager = ((AbstractMediaObject) mediaObject).getManager();
+		this.manager = ((AbstractMediaObject) mediaObject).getRomManager();
 	}
 
 	public AbstractBuilder(Class<?> clazz, RomManager manager) {
@@ -51,18 +52,18 @@ public class AbstractBuilder<T> {
 	 **/
 	public T create() {
 
-		RemoteObject remoteObject = manager.create(
-				clazz.getSimpleName(), props);
+		RemoteObjectFacade remoteObject = manager.create(clazz.getSimpleName(),
+				props);
 
 		return createMediaObject(remoteObject);
 	}
 
 	@SuppressWarnings("unchecked")
-	private T createMediaObject(RemoteObject remoteObject) {
+	private T createMediaObject(RemoteObjectFacade remoteObject) {
 		try {
 
-			return (T) clazz.getConstructor(RemoteObject.class,
-					RomManager.class).newInstance(remoteObject, manager);
+			return (T) clazz.getConstructor(RemoteObject.class).newInstance(
+					remoteObject);
 
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException

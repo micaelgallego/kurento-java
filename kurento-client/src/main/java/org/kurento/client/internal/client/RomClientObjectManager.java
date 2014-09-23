@@ -32,7 +32,7 @@ public class RomClientObjectManager implements RomEventHandler,
 	public void processEvent(String objectRef, String subscription,
 			String type, Props data) {
 
-		RemoteObject object = objects.get(objectRef);
+		RemoteObjectFacade object = objects.get(objectRef);
 
 		if (object == null) {
 			LOG.error("Trying to propagate an event to an object that doesn't exist in the client");
@@ -50,7 +50,7 @@ public class RomClientObjectManager implements RomEventHandler,
 		this.objects.remove(objectRef);
 	}
 
-	public RemoteObject getRemoteObject(String objectRef) {
+	public RemoteObjectFacade getRemoteObject(String objectRef) {
 		return this.objects.get(objectRef);
 	}
 

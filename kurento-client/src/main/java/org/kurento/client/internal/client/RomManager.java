@@ -23,13 +23,13 @@ public class RomManager implements ObjectRefsManager {
 		}
 	}
 
-	public RemoteObject create(String remoteClassName, Props constructorParams) {
+	public RemoteObjectFacade create(String remoteClassName, Props constructorParams) {
 
 		String objectRef = client.create(remoteClassName, constructorParams);
 		return new RemoteObject(objectRef, remoteClassName, this);
 	}
 
-	public RemoteObject create(String remoteClassName) {
+	public RemoteObjectFacade create(String remoteClassName) {
 		return create(remoteClassName, (Props) null);
 	}
 

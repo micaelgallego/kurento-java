@@ -12,10 +12,9 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
-public class RemoteObject {
+public class RemoteObject implements RemoteObjectFacade {
 
-	private static Logger LOG = LoggerFactory
-			.getLogger(RemoteObject.class);
+	private static Logger LOG = LoggerFactory.getLogger(RemoteObject.class);
 
 	private static ParamsFlattener FLATTENER = ParamsFlattener.getInstance();
 
@@ -23,8 +22,9 @@ public class RemoteObject {
 		public void onEvent(String eventType, Props data);
 	}
 
-	private final String objectRef;
 	private final RomManager manager;
+
+	private final String objectRef;
 	private final String type;
 
 	// This object is used in the process of unflatten. It is common that
@@ -37,28 +37,32 @@ public class RemoteObject {
 			.synchronizedMultimap(ArrayListMultimap
 					.<String, RemoteObjectEventListener> create());
 
-	public RemoteObject(String objectRef, String type,
-			RomManager manager) {
-		this.objectRef = objectRef;
+	public RemoteObject(String objectRef, String type, RomManager manager) {
 		this.manager = manager;
+
+		this.objectRef = objectRef;
 		this.type = type;
 
 		this.manager.registerObject(objectRef, this);
 	}
 
+	@Override
 	public Object getWrapperForUnflatten() {
 		return wrapperForUnflatten;
 	}
 
+	@Override
 	public void setWrapperForUnflatten(Object wrapperForUnflatten) {
 		this.wrapperForUnflatten = wrapperForUnflatten;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <E> E invoke(String method, Props params, Class<E> clazz) {
 		return (E) invoke(method, params, (Type) clazz);
 	}
 
+	@Override
 	public Object invoke(String method, Props params, Type type) {
 
 		Type flattenType = FLATTENER.calculateFlattenType(type);
@@ -68,6 +72,7 @@ public class RemoteObject {
 		return FLATTENER.unflattenValue("return", type, obj, manager);
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void invoke(String method, Props params, final Type type,
 			final Continuation cont) {
@@ -91,14 +96,17 @@ public class RemoteObject {
 				});
 	}
 
+	@Override
 	public void release() {
 		manager.release(objectRef);
 	}
 
+	@Override
 	public void release(final Continuation<Void> cont) {
 		manager.release(objectRef, cont);
 	}
 
+	@Override
 	public ListenerSubscriptionImpl addEventListener(String eventType,
 			RemoteObjectEventListener listener) {
 
@@ -109,31 +117,34 @@ public class RemoteObject {
 		return new ListenerSubscriptionImpl(subscription, eventType, listener);
 	}
 
+	@Override
 	public void addEventListener(final String eventType,
 			final Continuation<ListenerSubscriptionImpl> cont,
 			final RemoteObjectEventListener listener) {
 
-		manager.subscribe(objectRef, eventType, new DefaultContinuation<String>(
-				cont) {
-			@Override
-			public void onSuccess(String subscription) {
-				listeners.put(eventType, listener);
-				try {
-					cont.onSuccess(new ListenerSubscriptionImpl(subscription,
-							eventType, listener));
-				} catch (Exception e) {
-					log.warn(
-							"[Continuation] error invoking onSuccess implemented by client",
-							e);
-				}
-			}
-		});
+		manager.subscribe(objectRef, eventType,
+				new DefaultContinuation<String>(cont) {
+					@Override
+					public void onSuccess(String subscription) {
+						listeners.put(eventType, listener);
+						try {
+							cont.onSuccess(new ListenerSubscriptionImpl(
+									subscription, eventType, listener));
+						} catch (Exception e) {
+							log.warn(
+									"[Continuation] error invoking onSuccess implemented by client",
+									e);
+						}
+					}
+				});
 	}
 
+	@Override
 	public String getObjectRef() {
 		return objectRef;
 	}
 
+	@Override
 	public void fireEvent(String type, Props data) {
 		for (RemoteObjectEventListener eventListener : this.listeners.get(type)) {
 			try {
@@ -144,6 +155,7 @@ public class RemoteObject {
 		}
 	}
 
+	@Override
 	public String getType() {
 		return type;
 	}
@@ -177,6 +189,11 @@ public class RemoteObject {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public RomManager getRomManager() {
+		return manager;
 	}
 
 }

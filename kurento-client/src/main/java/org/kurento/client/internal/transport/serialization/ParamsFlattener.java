@@ -14,6 +14,7 @@ import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.internal.ParamAnnotationUtils;
 import org.kurento.client.internal.RemoteClass;
 import org.kurento.client.internal.client.RemoteObject;
+import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.server.ProtocolException;
 import org.kurento.client.internal.server.RemoteObjectManager;
@@ -394,7 +395,7 @@ public class ParamsFlattener {
 
 		} else if (remoteObject instanceof RemoteObject) {
 			// We are in the client side
-			Object wrapper = ((RemoteObject) remoteObject)
+			Object wrapper = ((RemoteObjectFacade) remoteObject)
 					.getWrapperForUnflatten();
 			return (wrapper != null) ? wrapper : remoteObject;
 

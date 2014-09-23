@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import org.kurento.client.internal.ParamAnnotationUtils;
 import org.kurento.client.internal.client.ListenerSubscriptionImpl;
 import org.kurento.client.internal.client.RemoteObject;
+import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.jsonrpc.Props;
 import org.slf4j.Logger;
@@ -15,35 +16,12 @@ public class AbstractMediaObject {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractMediaObject.class);
 
-	protected final RemoteObject remoteObject;
-	protected final RomManager manager;
+	protected final RemoteObjectFacade remoteObject;
 
-	protected AbstractMediaObject(RemoteObject remoteObject,
-			RomManager manager) {
+	protected AbstractMediaObject(RemoteObject remoteObject) {
 		this.remoteObject = remoteObject;
 		this.remoteObject.setWrapperForUnflatten(this);
-		this.manager = manager;
 	}
-
-	// private Object invoke(Method method, Object[] args, Continuation<?> cont)
-	// {
-	//
-	// Props props = ParamAnnotationUtils.extractProps(
-	// method.getParameterAnnotations(), args);
-	//
-	// if (cont != null) {
-	//
-	// Type[] paramTypes = method.getGenericParameterTypes();
-	// ParameterizedType contType = (ParameterizedType)
-	// paramTypes[paramTypes.length - 1];
-	// Type returnType = contType.getActualTypeArguments()[0];
-	// remoteObject.invoke(method.getName(), props, returnType, cont);
-	// return null;
-	// }
-	//
-	// return remoteObject.invoke(method.getName(), props,
-	// method.getGenericReturnType());
-	// }
 
 	protected ListenerSubscription subscribeEventListener(
 			final EventListener<?> clientListener,
@@ -97,12 +75,12 @@ public class AbstractMediaObject {
 		}
 	}
 
-	public RemoteObject getRemoteObject() {
+	public RemoteObjectFacade getRemoteObject() {
 		return remoteObject;
 	}
 
-	public RomManager getManager() {
-		return manager;
+	public RomManager getRomManager() {
+		return remoteObject.getRomManager();
 	}
 
 	@Override

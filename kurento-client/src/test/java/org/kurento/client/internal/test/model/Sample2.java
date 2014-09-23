@@ -7,8 +7,8 @@ import org.kurento.client.internal.client.RomManager;
 
 public class Sample2 extends AbstractMediaObject {
 
-	public Sample2(RemoteObject remoteObject, RomManager manager) {
-		super(remoteObject, manager);
+	public Sample2(RemoteObject remoteObject) {
+		super(remoteObject);
 	}
 
 	public String getAtt1() {
