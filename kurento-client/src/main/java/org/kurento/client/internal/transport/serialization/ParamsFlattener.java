@@ -14,7 +14,7 @@ import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.internal.ParamAnnotationUtils;
 import org.kurento.client.internal.RemoteClass;
 import org.kurento.client.internal.client.RemoteObject;
-import org.kurento.client.internal.client.RomClientObjectManager;
+import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.server.ProtocolException;
 import org.kurento.client.internal.server.RemoteObjectManager;
 import org.kurento.jsonrpc.Prop;
@@ -377,15 +377,16 @@ public class ParamsFlattener {
 		Object remoteObject = manager.getObject(value);
 		if (remoteObject == null) {
 
-			if (manager instanceof RomClientObjectManager) {
+			if (manager instanceof RomManager) {
 
-				RomClientObjectManager clientManager = (RomClientObjectManager) manager;
+				RomManager romManager = (RomManager) manager;
+
 				RemoteObject newRemoteObject = new RemoteObject(value,
-						((Class<?>) type).getSimpleName(),
-						clientManager.getClient(), clientManager);
-				clientManager.registerObject(value, newRemoteObject);
-				return newRemoteObject;
+						((Class<?>) type).getSimpleName(), romManager);
 
+				romManager.registerObject(value, newRemoteObject);
+
+				return newRemoteObject;
 			}
 
 			throw new ProtocolException("Remote object with objectRef '"

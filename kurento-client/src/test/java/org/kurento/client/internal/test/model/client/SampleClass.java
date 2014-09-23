@@ -9,7 +9,7 @@ import org.kurento.client.EventListener;
 import org.kurento.client.ListenerSubscription;
 import org.kurento.client.internal.RemoteClass;
 import org.kurento.client.internal.client.RemoteObject;
-import org.kurento.client.internal.client.RemoteObjectFactory;
+import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.server.Param;
 import org.kurento.client.internal.test.model.client.events.SampleEvent;
 import org.kurento.jsonrpc.Props;
@@ -19,8 +19,8 @@ import com.google.common.reflect.TypeToken;
 @RemoteClass
 public class SampleClass extends AbstractMediaObject {
 
-	public SampleClass(RemoteObject remoteObject, RemoteObjectFactory factory) {
-		super(remoteObject, factory);
+	public SampleClass(RemoteObject remoteObject, RomManager manager) {
+		super(remoteObject, manager);
 	}
 
 	public String getAtt1() {
@@ -173,15 +173,14 @@ public class SampleClass extends AbstractMediaObject {
 		subscribeEventListener(listener, SampleEvent.class, cont);
 	}
 
-	public static Builder with(String att1, boolean att2,
-			RemoteObjectFactory factory) {
-		return new Builder(att1, att2, factory);
+	public static Builder with(String att1, boolean att2, RomManager manager) {
+		return new Builder(att1, att2, manager);
 	}
 
 	public static class Builder extends AbstractBuilder<SampleClass> {
 
-		public Builder(String att1, boolean att2, RemoteObjectFactory factory) {
-			super(SampleClass.class, factory);
+		public Builder(String att1, boolean att2, RomManager manager) {
+			super(SampleClass.class, manager);
 			props.add("att1", att1);
 			props.add("att2", att2);
 		}

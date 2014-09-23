@@ -5,7 +5,7 @@ import java.lang.reflect.Constructor;
 import org.kurento.client.internal.ParamAnnotationUtils;
 import org.kurento.client.internal.client.ListenerSubscriptionImpl;
 import org.kurento.client.internal.client.RemoteObject;
-import org.kurento.client.internal.client.RemoteObjectFactory;
+import org.kurento.client.internal.client.RomManager;
 import org.kurento.jsonrpc.Props;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +16,13 @@ public class AbstractMediaObject {
 			.getLogger(AbstractMediaObject.class);
 
 	protected final RemoteObject remoteObject;
-	protected final RemoteObjectFactory factory;
+	protected final RomManager manager;
 
 	protected AbstractMediaObject(RemoteObject remoteObject,
-			RemoteObjectFactory factory) {
+			RomManager manager) {
 		this.remoteObject = remoteObject;
 		this.remoteObject.setWrapperForUnflatten(this);
-		this.factory = factory;
+		this.manager = manager;
 	}
 
 	// private Object invoke(Method method, Object[] args, Continuation<?> cont)
@@ -101,8 +101,8 @@ public class AbstractMediaObject {
 		return remoteObject;
 	}
 
-	public RemoteObjectFactory getFactory() {
-		return factory;
+	public RomManager getManager() {
+		return manager;
 	}
 
 	@Override

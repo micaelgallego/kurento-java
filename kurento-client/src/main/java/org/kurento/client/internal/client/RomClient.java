@@ -5,7 +5,7 @@ import java.lang.reflect.Type;
 import org.kurento.client.Continuation;
 import org.kurento.jsonrpc.Props;
 
-public abstract class RomClient {
+public interface RomClient {
 
 	// Sync methods --------------------------------------
 

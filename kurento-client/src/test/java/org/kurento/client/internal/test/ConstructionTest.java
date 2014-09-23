@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kurento.client.internal.client.RemoteObjectFactory;
+import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.test.model.Sample2;
 import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient;
 import org.kurento.client.internal.transport.jsonrpc.RomServerJsonRpcHandler;
@@ -12,11 +12,11 @@ import org.kurento.jsonrpc.client.JsonRpcClientLocal;
 
 public class ConstructionTest {
 
-	private static RemoteObjectFactory factory2;
+	private static RomManager manager;
 
 	@BeforeClass
 	public static void initFactory() {
-		factory2 = new RemoteObjectFactory(new RomClientJsonRpcClient(
+		manager = new RomManager(new RomClientJsonRpcClient(
 				new JsonRpcClientLocal(new RomServerJsonRpcHandler(
 						"org.kurento.client.internal.test.model", "Impl"))));
 	}
@@ -24,7 +24,7 @@ public class ConstructionTest {
 	@Test
 	public void initObject() {
 
-		Sample2 obj = Sample2.with("XXX", 33, factory2).withAtt3(0.5f).att4()
+		Sample2 obj = Sample2.with("XXX", 33, manager).withAtt3(0.5f).att4()
 				.create();
 
 		String att1 = obj.getAtt1();

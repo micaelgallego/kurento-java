@@ -14,7 +14,8 @@ import com.google.common.collect.Multimaps;
 
 public class RemoteObject {
 
-	private static Logger LOG = LoggerFactory.getLogger(RemoteObject.class);
+	private static Logger LOG = LoggerFactory
+			.getLogger(RemoteObject.class);
 
 	private static ParamsFlattener FLATTENER = ParamsFlattener.getInstance();
 
@@ -23,8 +24,7 @@ public class RemoteObject {
 	}
 
 	private final String objectRef;
-	private final RomClient client;
-	private final RomClientObjectManager manager;
+	private final RomManager manager;
 	private final String type;
 
 	// This object is used in the process of unflatten. It is common that
@@ -37,10 +37,9 @@ public class RemoteObject {
 			.synchronizedMultimap(ArrayListMultimap
 					.<String, RemoteObjectEventListener> create());
 
-	public RemoteObject(String objectRef, String type, RomClient client,
-			RomClientObjectManager manager) {
+	public RemoteObject(String objectRef, String type,
+			RomManager manager) {
 		this.objectRef = objectRef;
-		this.client = client;
 		this.manager = manager;
 		this.type = type;
 
@@ -64,7 +63,7 @@ public class RemoteObject {
 
 		Type flattenType = FLATTENER.calculateFlattenType(type);
 
-		Object obj = client.invoke(objectRef, method, params, flattenType);
+		Object obj = manager.invoke(objectRef, method, params, flattenType);
 
 		return FLATTENER.unflattenValue("return", type, obj, manager);
 	}
@@ -75,7 +74,7 @@ public class RemoteObject {
 
 		Type flattenType = FLATTENER.calculateFlattenType(type);
 
-		client.invoke(objectRef, method, params, flattenType,
+		manager.invoke(objectRef, method, params, flattenType,
 				new DefaultContinuation<Object>(cont) {
 					@SuppressWarnings("unchecked")
 					@Override
@@ -93,30 +92,17 @@ public class RemoteObject {
 	}
 
 	public void release() {
-		client.release(objectRef);
-		this.manager.releaseObject(objectRef);
+		manager.release(objectRef);
 	}
 
 	public void release(final Continuation<Void> cont) {
-		client.release(objectRef, new DefaultContinuation<Void>(cont) {
-			@Override
-			public void onSuccess(Void result) {
-				manager.releaseObject(objectRef);
-				try {
-					cont.onSuccess(null);
-				} catch (Exception e) {
-					log.warn(
-							"[Continuation] error invoking onSuccess implemented by client",
-							e);
-				}
-			}
-		});
+		manager.release(objectRef, cont);
 	}
 
 	public ListenerSubscriptionImpl addEventListener(String eventType,
 			RemoteObjectEventListener listener) {
 
-		String subscription = client.subscribe(objectRef, eventType);
+		String subscription = manager.subscribe(objectRef, eventType);
 
 		listeners.put(eventType, listener);
 
@@ -127,7 +113,7 @@ public class RemoteObject {
 			final Continuation<ListenerSubscriptionImpl> cont,
 			final RemoteObjectEventListener listener) {
 
-		client.subscribe(objectRef, eventType, new DefaultContinuation<String>(
+		manager.subscribe(objectRef, eventType, new DefaultContinuation<String>(
 				cont) {
 			@Override
 			public void onSuccess(String subscription) {

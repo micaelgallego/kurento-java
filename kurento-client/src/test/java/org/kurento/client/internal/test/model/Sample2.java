@@ -3,12 +3,12 @@ package org.kurento.client.internal.test.model;
 import org.kurento.client.AbstractBuilder;
 import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.internal.client.RemoteObject;
-import org.kurento.client.internal.client.RemoteObjectFactory;
+import org.kurento.client.internal.client.RomManager;
 
 public class Sample2 extends AbstractMediaObject {
 
-	public Sample2(RemoteObject remoteObject, RemoteObjectFactory factory) {
-		super(remoteObject, factory);
+	public Sample2(RemoteObject remoteObject, RomManager manager) {
+		super(remoteObject, manager);
 	}
 
 	public String getAtt1() {
@@ -27,16 +27,15 @@ public class Sample2 extends AbstractMediaObject {
 		return (boolean) remoteObject.invoke("getAtt4", null, boolean.class);
 	}
 
-	public static Builder with(String att1, int att2,
-			RemoteObjectFactory factory) {
-		return new Builder(att1, att2, factory);
+	public static Builder with(String att1, int att2, RomManager manager) {
+		return new Builder(att1, att2, manager);
 	}
 
 	public static class Builder extends AbstractBuilder<Sample2> {
 
-		public Builder(String att1, int att2, RemoteObjectFactory factory) {
+		public Builder(String att1, int att2, RomManager manager) {
 
-			super(Sample2.class, factory);
+			super(Sample2.class, manager);
 			props.add("att1", att1);
 			props.add("att2", att2);
 		}

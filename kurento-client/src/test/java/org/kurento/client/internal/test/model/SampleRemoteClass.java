@@ -6,7 +6,7 @@ import org.kurento.client.AbstractBuilder;
 import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.internal.RemoteClass;
 import org.kurento.client.internal.client.RemoteObject;
-import org.kurento.client.internal.client.RemoteObjectFactory;
+import org.kurento.client.internal.client.RomManager;
 import org.kurento.jsonrpc.Props;
 
 import com.google.common.reflect.TypeToken;
@@ -15,8 +15,8 @@ import com.google.common.reflect.TypeToken;
 public class SampleRemoteClass extends AbstractMediaObject {
 
 	public SampleRemoteClass(RemoteObject remoteObject,
-			RemoteObjectFactory factory) {
-		super(remoteObject, factory);
+			RomManager manager) {
+		super(remoteObject, manager);
 	}
 
 	public void methodReturnVoid() {
@@ -87,14 +87,14 @@ public class SampleRemoteClass extends AbstractMediaObject {
 				new Props().add("param", param), int.class);
 	}
 
-	public static Builder with(RemoteObjectFactory factory) {
-		return new Builder(factory);
+	public static Builder with(RomManager manager) {
+		return new Builder(manager);
 	}
 
 	public static class Builder extends AbstractBuilder<SampleRemoteClass> {
 
-		public Builder(RemoteObjectFactory factory) {
-			super(SampleRemoteClass.class, factory);
+		public Builder(RomManager manager) {
+			super(SampleRemoteClass.class, manager);
 		}
 	}
 }

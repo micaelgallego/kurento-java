@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.RemoteObject;
-import org.kurento.client.internal.client.RemoteObjectFactory;
+import org.kurento.client.internal.client.RomManager;
 import org.kurento.commons.exception.KurentoException;
 import org.kurento.jsonrpc.Props;
 
@@ -26,21 +26,21 @@ import org.kurento.jsonrpc.Props;
 public class AbstractBuilder<T> {
 
 	protected final Props props;
-	private final RemoteObjectFactory factory;
+	private final RomManager manager;
 	private final Class<?> clazz;
 
 	public AbstractBuilder(Class<?> clazz, MediaObject mediaObject) {
 
 		this.props = new Props();
 		this.clazz = clazz;
-		this.factory = ((AbstractMediaObject) mediaObject).getFactory();
+		this.manager = ((AbstractMediaObject) mediaObject).getManager();
 	}
 
-	public AbstractBuilder(Class<?> clazz, RemoteObjectFactory factory) {
+	public AbstractBuilder(Class<?> clazz, RomManager manager) {
 
 		this.props = new Props();
 		this.clazz = clazz;
-		this.factory = factory;
+		this.manager = manager;
 	}
 
 	/**
@@ -51,8 +51,8 @@ public class AbstractBuilder<T> {
 	 **/
 	public T create() {
 
-		RemoteObject remoteObject = factory
-				.create(clazz.getSimpleName(), props);
+		RemoteObject remoteObject = manager.create(
+				clazz.getSimpleName(), props);
 
 		return createMediaObject(remoteObject);
 	}
@@ -62,8 +62,7 @@ public class AbstractBuilder<T> {
 		try {
 
 			return (T) clazz.getConstructor(RemoteObject.class,
-					RemoteObjectFactory.class).newInstance(remoteObject,
-					factory);
+					RomManager.class).newInstance(remoteObject, manager);
 
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException
@@ -88,7 +87,7 @@ public class AbstractBuilder<T> {
 	 **/
 	public void createAsync(final Continuation<T> continuation) {
 
-		factory.create(clazz.getSimpleName(), props,
+		manager.create(clazz.getSimpleName(), props,
 				new DefaultContinuation<RemoteObject>(continuation) {
 					@Override
 					public void onSuccess(RemoteObject remoteObject) {

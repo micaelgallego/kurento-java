@@ -16,7 +16,7 @@ package org.kurento.client;
 
 import javax.annotation.PreDestroy;
 
-import org.kurento.client.internal.client.RemoteObjectFactory;
+import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient;
 import org.kurento.jsonrpc.client.JsonRpcClient;
 import org.kurento.jsonrpc.client.JsonRpcClientWebSocket;
@@ -30,24 +30,23 @@ import org.kurento.jsonrpc.client.JsonRpcClientWebSocket;
  */
 public class KurentoClient {
 
-	protected RemoteObjectFactory factory;
+	protected RomManager manager;
 
 	public static KurentoClient create(String websocketUrl) {
 		return new KurentoClient(new JsonRpcClientWebSocket(websocketUrl));
 	}
 
 	KurentoClient(JsonRpcClient client) {
-		this.factory = new RemoteObjectFactory(new RomClientJsonRpcClient(
-				client));
+		this.manager = new RomManager(new RomClientJsonRpcClient(client));
 	}
 
-	public RemoteObjectFactory getFactory() {
-		return factory;
+	public RomManager getRomManager() {
+		return manager;
 	}
 
 	@PreDestroy
 	public void destroy() {
-		factory.destroy();
+		manager.destroy();
 	}
 
 	public static KurentoClient createFromJsonRpcClient(

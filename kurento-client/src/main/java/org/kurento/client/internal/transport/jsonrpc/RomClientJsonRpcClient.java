@@ -47,7 +47,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-public class RomClientJsonRpcClient extends RomClient {
+public class RomClientJsonRpcClient implements RomClient {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(RomClientJsonRpcClient.class);
