@@ -53,13 +53,13 @@ public class WebRtcEndpointAsyncTest extends SdpAsyncBaseTest<WebRtcEndpoint> {
 
 		AsyncResultManager<WebRtcEndpoint> async = new AsyncResultManager<>(
 				"RtpEndpoint creation");
-		new WebRtcEndpoint.Builder(pipeline).buildAsync(async.getContinuation());
+		WebRtcEndpoint.with(pipeline).buildAsync(async.getContinuation());
 		sdp = async.waitForResult();
 		Assert.assertNotNull(sdp);
 
 		AsyncResultManager<WebRtcEndpoint> async2 = new AsyncResultManager<>(
 				"RtpEndpoint creation");
-		new WebRtcEndpoint.Builder(pipeline).buildAsync(async2.getContinuation());
+		WebRtcEndpoint.with(pipeline).buildAsync(async2.getContinuation());
 		sdp2 = async2.waitForResult();
 		Assert.assertNotNull(sdp2);
 	}

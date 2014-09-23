@@ -58,13 +58,13 @@ public class RtpEndpointAsyncTest extends SdpAsyncBaseTest<RtpEndpoint> {
 
 		AsyncResultManager<RtpEndpoint> async = new AsyncResultManager<>(
 				"RtpEndpoint creation");
-		new RtpEndpoint.Builder(pipeline).buildAsync(async.getContinuation());
+		RtpEndpoint.with(pipeline).buildAsync(async.getContinuation());
 		sdp = async.waitForResult();
 		Assert.assertNotNull(sdp);
 
 		AsyncResultManager<RtpEndpoint> async2 = new AsyncResultManager<>(
 				"RtpEndpoint creation");
-		new RtpEndpoint.Builder(pipeline).buildAsync(async2.getContinuation());
+		RtpEndpoint.with(pipeline).buildAsync(async2.getContinuation());
 		sdp2 = async2.waitForResult();
 		Assert.assertNotNull(sdp2);
 	}
@@ -73,10 +73,10 @@ public class RtpEndpointAsyncTest extends SdpAsyncBaseTest<RtpEndpoint> {
 	public void testRtpEndpointSimulatingAndroidSdp()
 			throws InterruptedException {
 
-		PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline,URL_BARCODES)
+		PlayerEndpoint player = PlayerEndpoint.with(pipeline,URL_BARCODES)
 				.create();
 
-		RtpEndpoint rtpEndpoint = new RtpEndpoint.Builder(pipeline).create();
+		RtpEndpoint rtpEndpoint = RtpEndpoint.with(pipeline).create();
 
 		String requestSdp = "v=0\r\n"
 				+ "o=- 12345 12345 IN IP4 95.125.31.136\r\n" + "s=-\r\n"

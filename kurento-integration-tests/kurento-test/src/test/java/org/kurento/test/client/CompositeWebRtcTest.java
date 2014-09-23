@@ -59,19 +59,19 @@ public class CompositeWebRtcTest extends BrowserKurentoClientTest {
 	public void doTest(Browser browserType) throws Exception {
 		// Media Pipeline
 		MediaPipeline mp = kurentoClient.createMediaPipeline();
-		WebRtcEndpoint webRtcEP1 = new WebRtcEndpoint.Builder(mp).create();
-		WebRtcEndpoint webRtcEP2 = new WebRtcEndpoint.Builder(mp).create();
-		WebRtcEndpoint webRtcEP3 = new WebRtcEndpoint.Builder(mp).create();
-		WebRtcEndpoint webRtcEP4 = new WebRtcEndpoint.Builder(mp).create();
-		HttpGetEndpoint httpEP = new HttpGetEndpoint.Builder(mp)
+		WebRtcEndpoint webRtcEP1 = WebRtcEndpoint.with(mp).create();
+		WebRtcEndpoint webRtcEP2 = WebRtcEndpoint.with(mp).create();
+		WebRtcEndpoint webRtcEP3 = WebRtcEndpoint.with(mp).create();
+		WebRtcEndpoint webRtcEP4 = WebRtcEndpoint.with(mp).create();
+		HttpGetEndpoint httpEP = HttpGetEndpoint.with(mp)
 				.terminateOnEOS().create();
 
-		Composite composite = new Composite.Builder(mp).create();
-		HubPort hubPort1 = new HubPort.Builder(composite).create();
-		HubPort hubPort2 = new HubPort.Builder(composite).create();
-		HubPort hubPort3 = new HubPort.Builder(composite).create();
-		HubPort hubPort4 = new HubPort.Builder(composite).create();
-		HubPort hubPort5 = new HubPort.Builder(composite).create();
+		Composite composite = Composite.with(mp).create();
+		HubPort hubPort1 = HubPort.with(composite).create();
+		HubPort hubPort2 = HubPort.with(composite).create();
+		HubPort hubPort3 = HubPort.with(composite).create();
+		HubPort hubPort4 = HubPort.with(composite).create();
+		HubPort hubPort5 = HubPort.with(composite).create();
 
 		webRtcEP1.connect(hubPort1);
 		webRtcEP2.connect(hubPort2);
@@ -132,7 +132,7 @@ public class CompositeWebRtcTest extends BrowserKurentoClientTest {
 					browserPlayer.color(Color.WHITE, 18, 450, 450));
 
 			// Finally, a B&N filter is connected in one of the WebRTC's
-			GStreamerFilter bn = new GStreamerFilter.Builder(mp,
+			GStreamerFilter bn = GStreamerFilter.with(mp,
 					"videobalance saturation=0.0").create();
 			webRtcEP1.connect(bn);
 			bn.connect(hubPort1);

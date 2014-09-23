@@ -173,6 +173,11 @@ public class SampleClass extends AbstractMediaObject {
 		subscribeEventListener(listener, SampleEvent.class, cont);
 	}
 
+	public static Builder with(String att1, boolean att2,
+			RemoteObjectFactory factory) {
+		return new Builder(att1, att2, factory);
+	}
+
 	public static class Builder extends AbstractBuilder<SampleClass> {
 
 		public Builder(String att1, boolean att2, RemoteObjectFactory factory) {

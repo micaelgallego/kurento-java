@@ -41,7 +41,7 @@ public class GStreamerFilterTest extends MediaPipelineBaseTest {
 
 	@Before
 	public void setupMediaElements() {
-		player = new PlayerEndpoint.Builder(pipeline, URL_SMALL).create();
+		player = PlayerEndpoint.with(pipeline, URL_SMALL).create();
 	}
 
 	@After
@@ -52,7 +52,7 @@ public class GStreamerFilterTest extends MediaPipelineBaseTest {
 	@Test
 	public void testInstantiation() throws InterruptedException {
 
-		filter = new GStreamerFilter.Builder(pipeline,
+		filter = GStreamerFilter.with(pipeline,
 				"videoflip method=horizontal-flip").create();
 
 		Assert.assertNotNull(filter);

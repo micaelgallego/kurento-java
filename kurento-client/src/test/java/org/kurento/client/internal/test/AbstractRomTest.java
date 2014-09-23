@@ -57,7 +57,7 @@ public abstract class AbstractRomTest {
 		RemoteObjectFactory factory = new RemoteObjectFactory(
 				new RomClientJsonRpcClient(client));
 
-		SampleClass obj = new SampleClass.Builder("XXX", false, factory)
+		SampleClass obj = SampleClass.with("XXX", false, factory)
 				.withAtt3(0.5f).withAtt4(22).create();
 
 		for (int i = 0; i < 5; i++) {

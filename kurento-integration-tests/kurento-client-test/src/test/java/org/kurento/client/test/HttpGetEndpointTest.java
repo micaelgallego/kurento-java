@@ -65,7 +65,7 @@ public class HttpGetEndpointTest extends MediaPipelineBaseTest {
 	 */
 	@Test
 	public void testMethodGetUrl() {
-		HttpGetEndpoint httpEP = new HttpGetEndpoint.Builder(pipeline).create();
+		HttpGetEndpoint httpEP = HttpGetEndpoint.with(pipeline).create();
 		Assert.assertTrue(!httpEP.getUrl().isEmpty());
 	}
 
@@ -80,10 +80,10 @@ public class HttpGetEndpointTest extends MediaPipelineBaseTest {
 	public void testEventMediaSessionStarted() throws InterruptedException,
 			ClientProtocolException, IOException {
 
-		final PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline,URL_SMALL)
+		final PlayerEndpoint player = PlayerEndpoint.with(pipeline,URL_SMALL)
 				.create();
 
-		HttpGetEndpoint httpEP = new HttpGetEndpoint.Builder(pipeline).create();
+		HttpGetEndpoint httpEP = HttpGetEndpoint.with(pipeline).create();
 		player.connect(httpEP);
 
 		AsyncEventManager<EndOfStreamEvent> async = new AsyncEventManager<>(
@@ -120,9 +120,9 @@ public class HttpGetEndpointTest extends MediaPipelineBaseTest {
 	@Test
 	public void testEventMediaSessionTerminated() throws InterruptedException,
 			ClientProtocolException, IOException {
-		final PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline,URL_SMALL)
+		final PlayerEndpoint player = PlayerEndpoint.with(pipeline,URL_SMALL)
 				.create();
-		HttpGetEndpoint httpEP = new HttpGetEndpoint.Builder(pipeline).terminateOnEOS()
+		HttpGetEndpoint httpEP = HttpGetEndpoint.with(pipeline).terminateOnEOS()
 				.create();
 		player.connect(httpEP);
 

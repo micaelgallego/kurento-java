@@ -61,24 +61,24 @@ public class CompositePlayerTest extends BrowserKurentoClientTest {
 	public void doTest(Browser browserType) throws Exception {
 		// Media Pipeline
 		MediaPipeline mp = kurentoClient.createMediaPipeline();
-		PlayerEndpoint playerRed = new PlayerEndpoint.Builder(mp,
+		PlayerEndpoint playerRed = PlayerEndpoint.with(mp,
 				"http://files.kurento.org/video/60sec/red.webm").create();
-		PlayerEndpoint playerGreen = new PlayerEndpoint.Builder(mp,
+		PlayerEndpoint playerGreen = PlayerEndpoint.with(mp,
 				"http://files.kurento.org/video/60sec/green.webm").create();
-		PlayerEndpoint playerBlue = new PlayerEndpoint.Builder(mp,
+		PlayerEndpoint playerBlue = PlayerEndpoint.with(mp,
 				"http://files.kurento.org/video/60sec/blue.webm").create();
-		PlayerEndpoint playerWhite = new PlayerEndpoint.Builder(mp,
+		PlayerEndpoint playerWhite = PlayerEndpoint.with(mp,
 				"http://files.kurento.org/video/60sec/white.webm").create();
 
-		Composite composite = new Composite.Builder(mp).create();
-		HubPort hubPort1 = new HubPort.Builder(composite).create();
-		HubPort hubPort2 = new HubPort.Builder(composite).create();
-		HubPort hubPort3 = new HubPort.Builder(composite).create();
-		HubPort hubPort4 = new HubPort.Builder(composite).create();
-		HubPort hubPort5 = new HubPort.Builder(composite).create();
+		Composite composite = Composite.with(mp).create();
+		HubPort hubPort1 = HubPort.with(composite).create();
+		HubPort hubPort2 = HubPort.with(composite).create();
+		HubPort hubPort3 = HubPort.with(composite).create();
+		HubPort hubPort4 = HubPort.with(composite).create();
+		HubPort hubPort5 = HubPort.with(composite).create();
 
-		HttpGetEndpoint httpEP = new HttpGetEndpoint.Builder(mp)
-				.terminateOnEOS().create();
+		HttpGetEndpoint httpEP = HttpGetEndpoint.with(mp).terminateOnEOS()
+				.create();
 		playerRed.connect(hubPort1);
 		playerGreen.connect(hubPort2);
 		playerBlue.connect(hubPort3);

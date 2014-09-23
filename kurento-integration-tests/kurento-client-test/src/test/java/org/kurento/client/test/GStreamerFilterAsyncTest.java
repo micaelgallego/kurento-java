@@ -46,7 +46,7 @@ public class GStreamerFilterAsyncTest extends MediaPipelineAsyncBaseTest {
 
 	@Before
 	public void setupMediaElements() {
-		player = new PlayerEndpoint.Builder(pipeline, URL_PLATES).create();
+		player = PlayerEndpoint.with(pipeline, URL_PLATES).create();
 	}
 
 	@After
@@ -60,7 +60,7 @@ public class GStreamerFilterAsyncTest extends MediaPipelineAsyncBaseTest {
 		AsyncResultManager<GStreamerFilter> async = new AsyncResultManager<GStreamerFilter>(
 				"GStreamerFilter creation");
 
-		new GStreamerFilter.Builder(pipeline,
+		GStreamerFilter.with(pipeline,
 				"videoflip method=horizontal-flip").buildAsync(async
 				.getContinuation());
 

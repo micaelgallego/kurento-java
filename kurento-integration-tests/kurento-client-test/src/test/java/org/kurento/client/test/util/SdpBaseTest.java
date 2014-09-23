@@ -92,7 +92,7 @@ public abstract class SdpBaseTest<T extends SdpEndpoint> extends
 	public void testRtpEndpointSimulatingAndroidSdp()
 			throws InterruptedException {
 
-		PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline,
+		PlayerEndpoint player = PlayerEndpoint.with(pipeline,
 				URL_BARCODES).create();
 
 		String requestSdp = "v=0\r\n"

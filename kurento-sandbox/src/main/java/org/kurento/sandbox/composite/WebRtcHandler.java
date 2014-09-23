@@ -75,9 +75,9 @@ public class WebRtcHandler extends DefaultJsonRpcHandler<JsonObject> {
 		log.debug("Received SDP offer");
 
 		// Media Logic
-		WebRtcEndpoint webRtcEndpoint = new WebRtcEndpoint.Builder(
+		WebRtcEndpoint webRtcEndpoint = WebRtcEndpoint.with(
 				room.getPipeline()).create();
-		HubPort port = new HubPort.Builder(room.getComposite()).create();
+		HubPort port = HubPort.with(room.getComposite()).create();
 		webRtcEndpoint.connect(port);
 		port.connect(webRtcEndpoint);
 		room.joinParticipant(session, webRtcEndpoint, port);

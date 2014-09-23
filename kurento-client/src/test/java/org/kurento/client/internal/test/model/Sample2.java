@@ -27,6 +27,11 @@ public class Sample2 extends AbstractMediaObject {
 		return (boolean) remoteObject.invoke("getAtt4", null, boolean.class);
 	}
 
+	public static Builder with(String att1, int att2,
+			RemoteObjectFactory factory) {
+		return new Builder(att1, att2, factory);
+	}
+
 	public static class Builder extends AbstractBuilder<Sample2> {
 
 		public Builder(String att1, int att2, RemoteObjectFactory factory) {

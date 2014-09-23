@@ -48,8 +48,8 @@ public class RtpEndpointTest extends SdpBaseTest<RtpEndpoint> {
 
 	@Before
 	public void setupMediaElements() {
-		sdp = new RtpEndpoint.Builder(pipeline).create();
-		sdp2 = new RtpEndpoint.Builder(pipeline).create();
+		sdp = RtpEndpoint.with(pipeline).create();
+		sdp2 = RtpEndpoint.with(pipeline).create();
 	}
 
 }

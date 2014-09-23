@@ -55,7 +55,7 @@ public class PlayerEndpointTest extends MediaPipelineBaseTest {
 
 	@Before
 	public void setupMediaElements() throws KurentoException {
-		player = new PlayerEndpoint.Builder(pipeline,URL_SMALL).create();
+		player = PlayerEndpoint.with(pipeline,URL_SMALL).create();
 	}
 
 	@After

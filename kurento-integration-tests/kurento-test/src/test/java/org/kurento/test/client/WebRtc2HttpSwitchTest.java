@@ -51,9 +51,9 @@ public class WebRtc2HttpSwitchTest extends BrowserKurentoClientTest {
 	public void testWebRtc2HttpSwitch() throws Exception {
 		// Media Pipeline
 		MediaPipeline mp = kurentoClient.createMediaPipeline();
-		WebRtcEndpoint webRtcEndpoint1 = new WebRtcEndpoint.Builder(mp).create();
-		WebRtcEndpoint webRtcEndpoint2 = new WebRtcEndpoint.Builder(mp).create();
-		HttpGetEndpoint httpGetEndpoint = new HttpGetEndpoint.Builder(mp)
+		WebRtcEndpoint webRtcEndpoint1 = WebRtcEndpoint.with(mp).create();
+		WebRtcEndpoint webRtcEndpoint2 = WebRtcEndpoint.with(mp).create();
+		HttpGetEndpoint httpGetEndpoint = HttpGetEndpoint.with(mp)
 				.create();
 
 		webRtcEndpoint1.connect(webRtcEndpoint1);

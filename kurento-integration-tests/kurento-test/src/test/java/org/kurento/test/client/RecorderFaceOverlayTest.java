@@ -70,13 +70,13 @@ public class RecorderFaceOverlayTest extends BrowserKurentoClientTest {
 	public void doTest(Browser browserType) throws Exception {
 		// Media Pipeline #1
 		MediaPipeline mp = kurentoClient.createMediaPipeline();
-		PlayerEndpoint playerEP = new PlayerEndpoint.Builder(mp,
+		PlayerEndpoint playerEP = PlayerEndpoint.with(mp,
 				"http://files.kurento.org/video/fiwarecut.mp4").create();
-		HttpGetEndpoint httpEP = new HttpGetEndpoint.Builder(mp)
+		HttpGetEndpoint httpEP = HttpGetEndpoint.with(mp)
 				.terminateOnEOS().create();
-		RecorderEndpoint recorderEP = new RecorderEndpoint.Builder(mp,
+		RecorderEndpoint recorderEP = RecorderEndpoint.with(mp,
 				FILE_SCHEMA + getDefaultFileForRecording()).create();
-		final FaceOverlayFilter filter = new FaceOverlayFilter.Builder(mp)
+		final FaceOverlayFilter filter = FaceOverlayFilter.with(mp)
 				.create();
 		filter.setOverlayedImage(
 				"http://files.kurento.org/imgs/red-square.png", -0.2F, -1.2F,
@@ -94,9 +94,9 @@ public class RecorderFaceOverlayTest extends BrowserKurentoClientTest {
 
 		// Media Pipeline #2
 		MediaPipeline mp2 = kurentoClient.createMediaPipeline();
-		PlayerEndpoint playerEP2 = new PlayerEndpoint.Builder(mp2, FILE_SCHEMA
+		PlayerEndpoint playerEP2 = PlayerEndpoint.with(mp2, FILE_SCHEMA
 				+ getDefaultFileForRecording()).create();
-		HttpGetEndpoint httpEP2 = new HttpGetEndpoint.Builder(mp2)
+		HttpGetEndpoint httpEP2 = HttpGetEndpoint.with(mp2)
 				.terminateOnEOS().create();
 		playerEP2.connect(httpEP2);
 

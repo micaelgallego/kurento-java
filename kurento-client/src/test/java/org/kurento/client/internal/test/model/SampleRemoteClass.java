@@ -87,6 +87,10 @@ public class SampleRemoteClass extends AbstractMediaObject {
 				new Props().add("param", param), int.class);
 	}
 
+	public static Builder with(RemoteObjectFactory factory) {
+		return new Builder(factory);
+	}
+
 	public static class Builder extends AbstractBuilder<SampleRemoteClass> {
 
 		public Builder(RemoteObjectFactory factory) {

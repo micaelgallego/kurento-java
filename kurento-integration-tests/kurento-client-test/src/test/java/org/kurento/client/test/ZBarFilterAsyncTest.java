@@ -64,11 +64,11 @@ public class ZBarFilterAsyncTest extends MediaPipelineAsyncBaseTest {
 		AsyncResultManager<ZBarFilter> async = new AsyncResultManager<>(
 				"ZBarFilter creation");
 
-		new ZBarFilter.Builder(pipeline).buildAsync(async.getContinuation());
+		ZBarFilter.with(pipeline).buildAsync(async.getContinuation());
 
 		zbar = async.waitForResult();
 
-		player = new PlayerEndpoint.Builder(pipeline, URL_BARCODES).create();
+		player = PlayerEndpoint.with(pipeline, URL_BARCODES).create();
 	}
 
 	@After

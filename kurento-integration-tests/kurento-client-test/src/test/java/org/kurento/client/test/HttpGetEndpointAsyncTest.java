@@ -68,7 +68,7 @@ public class HttpGetEndpointAsyncTest extends MediaPipelineAsyncBaseTest {
 		AsyncResultManager<HttpGetEndpoint> async = new AsyncResultManager<>(
 				"HttpGetEndpoint creation");
 
-		new HttpGetEndpoint.Builder(pipeline).buildAsync(async.getContinuation());
+		HttpGetEndpoint.with(pipeline).buildAsync(async.getContinuation());
 
 		httpEp = async.waitForResult();
 	}
@@ -106,7 +106,7 @@ public class HttpGetEndpointAsyncTest extends MediaPipelineAsyncBaseTest {
 	public void testEventMediaSessionStarted() throws InterruptedException,
 			IOException {
 
-		final PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline,URL_SMALL)
+		final PlayerEndpoint player = PlayerEndpoint.with(pipeline,URL_SMALL)
 				.create();
 
 		player.connect(httpEp);
@@ -149,7 +149,7 @@ public class HttpGetEndpointAsyncTest extends MediaPipelineAsyncBaseTest {
 	public void testEventMediaSessionTerminated() throws InterruptedException,
 			IOException {
 
-		final PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline,URL_SMALL)
+		final PlayerEndpoint player = PlayerEndpoint.with(pipeline,URL_SMALL)
 				.create();
 
 		player.connect(httpEp);
