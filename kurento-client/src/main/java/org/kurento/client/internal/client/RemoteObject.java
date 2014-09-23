@@ -2,14 +2,15 @@ package org.kurento.client.internal.client;
 
 import java.lang.reflect.Type;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.*;
-
 import org.kurento.client.Continuation;
 import org.kurento.client.internal.transport.serialization.ParamsFlattener;
 import org.kurento.jsonrpc.Props;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 public class RemoteObject {
 
@@ -56,12 +57,7 @@ public class RemoteObject {
 
 	@SuppressWarnings("unchecked")
 	public <E> E invoke(String method, Props params, Class<E> clazz) {
-
-		Type flattenType = FLATTENER.calculateFlattenType(clazz);
-
-		Object obj = invoke(method, params, flattenType);
-
-		return (E) FLATTENER.unflattenValue("return", clazz, obj, manager);
+		return (E) invoke(method, params, (Type) clazz);
 	}
 
 	public Object invoke(String method, Props params, Type type) {
@@ -81,19 +77,19 @@ public class RemoteObject {
 
 		client.invoke(objectRef, method, params, flattenType,
 				new DefaultContinuation<Object>(cont) {
-			@SuppressWarnings("unchecked")
-			@Override
-			public void onSuccess(Object result) {
-				try {
-					cont.onSuccess(FLATTENER.unflattenValue("return",
-							type, result, manager));
-				} catch (Exception e) {
-					log.warn(
-							"[Continuation] error invoking onSuccess implemented by client",
-							e);
-				}
-			}
-		});
+					@SuppressWarnings("unchecked")
+					@Override
+					public void onSuccess(Object result) {
+						try {
+							cont.onSuccess(FLATTENER.unflattenValue("return",
+									type, result, manager));
+						} catch (Exception e) {
+							log.warn(
+									"[Continuation] error invoking onSuccess implemented by client",
+									e);
+						}
+					}
+				});
 	}
 
 	public void release() {

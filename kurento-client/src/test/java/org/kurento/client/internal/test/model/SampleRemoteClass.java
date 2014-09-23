@@ -2,36 +2,95 @@ package org.kurento.client.internal.test.model;
 
 import java.util.List;
 
+import org.kurento.client.AbstractBuilder;
+import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.internal.RemoteClass;
-import org.kurento.client.internal.server.Param;
+import org.kurento.client.internal.client.RemoteObject;
+import org.kurento.client.internal.client.RemoteObjectFactory;
+import org.kurento.jsonrpc.Props;
+
+import com.google.common.reflect.TypeToken;
 
 @RemoteClass
-public interface SampleRemoteClass {
+public class SampleRemoteClass extends AbstractMediaObject {
 
-	public void methodReturnVoid();
+	public SampleRemoteClass(RemoteObject remoteObject,
+			RemoteObjectFactory factory) {
+		super(remoteObject, factory);
+	}
 
-	public String methodReturnsString();
+	public void methodReturnVoid() {
+		remoteObject.invoke("methodReturnVoid", null, Void.class);
+	}
 
-	public boolean methodReturnsBoolean();
+	public String methodReturnsString() {
+		return remoteObject.invoke("methodReturnsString", null, String.class);
+	}
 
-	public float methodReturnsFloat();
+	public boolean methodReturnsBoolean() {
+		return remoteObject.invoke("methodReturnsBoolean", null, boolean.class);
+	}
 
-	public int methodReturnsInt();
+	public float methodReturnsFloat() {
+		return remoteObject.invoke("methodReturnsFloat", null, float.class);
+	}
 
-	public List<String> methodReturnsStringList();
+	public int methodReturnsInt() {
+		return remoteObject.invoke("methodReturnsInt", null, int.class);
+	}
 
-	public List<Boolean> methodReturnsBooleanList();
+	@SuppressWarnings({ "unchecked", "serial" })
+	public List<String> methodReturnsStringList() {
+		return (List<String>) remoteObject.invoke("methodReturnsStringList",
+				null, new TypeToken<List<String>>() {
+				}.getType());
+	}
 
-	public List<Float> methodReturnsFloatList();
+	@SuppressWarnings({ "unchecked", "serial" })
+	public List<Boolean> methodReturnsBooleanList() {
+		return (List<Boolean>) remoteObject.invoke("methodReturnsBooleanList",
+				null, new TypeToken<List<Boolean>>() {
+				}.getType());
+	}
 
-	public List<Integer> methodReturnsIntList();
+	@SuppressWarnings({ "unchecked", "serial" })
+	public List<Float> methodReturnsFloatList() {
+		return (List<Float>) remoteObject.invoke("methodReturnsFloatList",
+				null, new TypeToken<List<Float>>() {
+				}.getType());
+	}
 
-	public String methodParamString(@Param("param") String param);
+	@SuppressWarnings({ "unchecked", "serial" })
+	public List<Integer> methodReturnsIntList() {
+		return (List<Integer>) remoteObject.invoke("methodReturnsIntList",
+				null, new TypeToken<List<Integer>>() {
+				}.getType());
+	}
 
-	public boolean methodParamBoolean(@Param("param") boolean param);
+	public String methodParamString(String param) {
+		return remoteObject.invoke("methodParamString",
+				new Props().add("param", param), String.class);
+	}
 
-	public float methodParamFloat(@Param("param") float param);
+	public boolean methodParamBoolean(boolean param) {
+		return remoteObject.invoke("methodParamBoolean",
+				new Props().add("param", param), boolean.class);
+	}
 
-	public int methodParamInt(@Param("param") int param);
+	public float methodParamFloat(float param) {
+		return remoteObject.invoke("methodParamFloat",
+				new Props().add("param", param), float.class);
+	}
 
+	public int methodParamInt(int param) {
+		return remoteObject.invoke("methodParamInt",
+				new Props().add("param", param), int.class);
+	}
+
+	public static class Builder extends AbstractBuilder<SampleRemoteClass> {
+
+		public Builder(RemoteObjectFactory factory) {
+			super(SampleRemoteClass.class, factory);
+		}
+	}
 }

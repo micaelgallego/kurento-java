@@ -2,10 +2,8 @@ package org.kurento.client.internal.transport.serialization;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +14,6 @@ import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.internal.ParamAnnotationUtils;
 import org.kurento.client.internal.RemoteClass;
 import org.kurento.client.internal.client.RemoteObject;
-import org.kurento.client.internal.client.RemoteObjectInvocationHandler;
 import org.kurento.client.internal.client.RomClientObjectManager;
 import org.kurento.client.internal.server.ProtocolException;
 import org.kurento.client.internal.server.RemoteObjectManager;
@@ -120,19 +117,22 @@ public class ParamsFlattener {
 
 		Object processedParam;
 		if (param instanceof AbstractMediaObject) {
+
 			processedParam = ((AbstractMediaObject) param).getRemoteObject()
 					.getObjectRef();
-		} else if (param instanceof Proxy) {
 
-			InvocationHandler handler = Proxy.getInvocationHandler(param);
-			if (handler instanceof RemoteObjectInvocationHandler) {
-				RemoteObjectInvocationHandler roHandler = (RemoteObjectInvocationHandler) handler;
-				processedParam = roHandler.getRemoteObject().getObjectRef();
-			} else {
-				throw new ProtocolException(
-						"Only proxies from remote objects are allowed, but found one with InvocationHandler "
-								+ handler);
-			}
+			// } else if (param instanceof Proxy) {
+			//
+			// InvocationHandler handler = Proxy.getInvocationHandler(param);
+			// if (handler instanceof RemoteObjectInvocationHandler) {
+			// RemoteObjectInvocationHandler roHandler =
+			// (RemoteObjectInvocationHandler) handler;
+			// processedParam = roHandler.getRemoteObject().getObjectRef();
+			// } else {
+			// throw new ProtocolException(
+			// "Only proxies from remote objects are allowed, but found one with InvocationHandler "
+			// + handler);
+			// }
 
 		} else if (param instanceof Enum<?>) {
 			processedParam = param.toString();

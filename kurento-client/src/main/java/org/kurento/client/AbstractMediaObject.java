@@ -1,17 +1,11 @@
 package org.kurento.client;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Proxy;
-import java.lang.reflect.Type;
 
 import org.kurento.client.internal.ParamAnnotationUtils;
-import org.kurento.client.internal.client.BuilderInvocationHandler;
 import org.kurento.client.internal.client.ListenerSubscriptionImpl;
 import org.kurento.client.internal.client.RemoteObject;
 import org.kurento.client.internal.client.RemoteObjectFactory;
-import org.kurento.client.internal.server.FactoryMethod;
 import org.kurento.jsonrpc.Props;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,45 +21,29 @@ public class AbstractMediaObject {
 	protected AbstractMediaObject(RemoteObject remoteObject,
 			RemoteObjectFactory factory) {
 		this.remoteObject = remoteObject;
+		this.remoteObject.setWrapperForUnflatten(this);
 		this.factory = factory;
 	}
 
-	private Object invoke(Method method, Object[] args, Continuation<?> cont) {
-
-		Props props = ParamAnnotationUtils.extractProps(
-				method.getParameterAnnotations(), args);
-
-		if (cont != null) {
-
-			Type[] paramTypes = method.getGenericParameterTypes();
-			ParameterizedType contType = (ParameterizedType) paramTypes[paramTypes.length - 1];
-			Type returnType = contType.getActualTypeArguments()[0];
-			remoteObject.invoke(method.getName(), props, returnType, cont);
-			return null;
-		}
-
-		return remoteObject.invoke(method.getName(), props,
-				method.getGenericReturnType());
-	}
-
-	private Object createBuilderObject(final Object proxy, Method method,
-			String methodName, Props props) {
-
-		if (props == null) {
-			props = new Props();
-		}
-
-		FactoryMethod annotation = method.getAnnotation(FactoryMethod.class);
-		props.add(annotation.value(), remoteObject.getObjectRef());
-
-		Class<?> builderClass = method.getReturnType();
-
-		return Proxy.newProxyInstance(this.getClass().getClassLoader(),
-				new Class[] { method.getReturnType() },
-				new BuilderInvocationHandler(builderClass.getEnclosingClass(),
-						props, factory));
-
-	}
+	// private Object invoke(Method method, Object[] args, Continuation<?> cont)
+	// {
+	//
+	// Props props = ParamAnnotationUtils.extractProps(
+	// method.getParameterAnnotations(), args);
+	//
+	// if (cont != null) {
+	//
+	// Type[] paramTypes = method.getGenericParameterTypes();
+	// ParameterizedType contType = (ParameterizedType)
+	// paramTypes[paramTypes.length - 1];
+	// Type returnType = contType.getActualTypeArguments()[0];
+	// remoteObject.invoke(method.getName(), props, returnType, cont);
+	// return null;
+	// }
+	//
+	// return remoteObject.invoke(method.getName(), props,
+	// method.getGenericReturnType());
+	// }
 
 	protected ListenerSubscription subscribeEventListener(
 			final EventListener<?> clientListener,

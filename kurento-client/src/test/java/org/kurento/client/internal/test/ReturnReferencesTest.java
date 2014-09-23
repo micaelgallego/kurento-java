@@ -11,7 +11,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kurento.client.Continuation;
 import org.kurento.client.internal.client.RemoteObjectFactory;
-import org.kurento.client.internal.client.RemoteObjectTypedFactory;
 import org.kurento.client.internal.test.model.client.SampleClass;
 import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient;
 import org.kurento.client.internal.transport.jsonrpc.RomServerJsonRpcHandler;
@@ -19,27 +18,26 @@ import org.kurento.jsonrpc.client.JsonRpcClientLocal;
 
 public class ReturnReferencesTest {
 
-	private static RemoteObjectTypedFactory factory;
+	private static RemoteObjectFactory factory;
 
 	@BeforeClass
 	public static void initFactory() {
-		factory = new RemoteObjectTypedFactory(
-				new RemoteObjectFactory(
-						new RomClientJsonRpcClient(
-								new JsonRpcClientLocal(
-										new RomServerJsonRpcHandler(
-												"org.kurento.client.internal.test.model.server",
-												"Impl")))));
+		factory = new RemoteObjectFactory(
+				new RomClientJsonRpcClient(
+						new JsonRpcClientLocal(
+								new RomServerJsonRpcHandler(
+										"org.kurento.client.internal.test.model.server",
+										"Impl"))));
 	}
 
 	@Test
 	public void objectRefTest() {
 
-		SampleClass obj = factory.getFactory(SampleClass.Factory.class)
-				.create("AAA", false).withAtt3(0.5f).withAtt4(22).build();
+		SampleClass obj = new SampleClass.Builder("AAA", false, factory)
+				.withAtt3(0.5f).withAtt4(22).build();
 
-		SampleClass obj2 = factory.getFactory(SampleClass.Factory.class)
-				.create("BBB", false).withAtt3(0.5f).withAtt4(22).build();
+		SampleClass obj2 = new SampleClass.Builder("BBB", false, factory)
+				.withAtt3(0.5f).withAtt4(22).build();
 
 		SampleClass obj3 = obj.echoObjectRef(obj2);
 
@@ -50,11 +48,11 @@ public class ReturnReferencesTest {
 	@Test
 	public void objectRefTestAsync() throws InterruptedException {
 
-		SampleClass obj = factory.getFactory(SampleClass.Factory.class)
-				.create("AAA", false).withAtt3(0.5f).withAtt4(22).build();
+		SampleClass obj = new SampleClass.Builder("AAA", false, factory)
+				.withAtt3(0.5f).withAtt4(22).build();
 
-		final SampleClass obj2 = factory.getFactory(SampleClass.Factory.class)
-				.create("BBB", false).withAtt3(0.5f).withAtt4(22).build();
+		final SampleClass obj2 = new SampleClass.Builder("BBB", false, factory)
+				.withAtt3(0.5f).withAtt4(22).build();
 
 		final BlockingQueue<SampleClass> queue = new ArrayBlockingQueue<>(1);
 

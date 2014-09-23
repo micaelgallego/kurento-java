@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.kurento.client.internal.client.RemoteObjectFactory;
-import org.kurento.client.internal.client.RemoteObjectTypedFactory;
 import org.kurento.client.internal.test.model.client.ComplexParam;
 import org.kurento.client.internal.test.model.client.SampleClass;
 import org.kurento.client.internal.test.model.client.SampleEnum;
@@ -55,11 +54,11 @@ public abstract class AbstractRomTest {
 
 	public void useRom(JsonRpcClient client) {
 
-		RemoteObjectTypedFactory factory = new RemoteObjectTypedFactory(
-				new RemoteObjectFactory(new RomClientJsonRpcClient(client)));
+		RemoteObjectFactory factory = new RemoteObjectFactory(
+				new RomClientJsonRpcClient(client));
 
-		SampleClass obj = factory.getFactory(SampleClass.Factory.class)
-				.create("XXX", false).withAtt3(0.5f).withAtt4(22).build();
+		SampleClass obj = new SampleClass.Builder("XXX", false, factory)
+				.withAtt3(0.5f).withAtt4(22).build();
 
 		for (int i = 0; i < 5; i++) {
 

@@ -36,8 +36,7 @@ public class AbstractBuilder<T> {
 		this.factory = ((AbstractMediaObject) mediaObject).getFactory();
 	}
 
-	public AbstractBuilder(Class<MediaPipeline> clazz,
-			RemoteObjectFactory factory) {
+	public AbstractBuilder(Class<?> clazz, RemoteObjectFactory factory) {
 
 		this.props = new Props();
 		this.clazz = clazz;

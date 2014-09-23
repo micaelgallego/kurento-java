@@ -1,27 +1,49 @@
 package org.kurento.client.internal.test.model;
 
-import org.kurento.client.internal.client.RemoteObjectBuilder;
-import org.kurento.client.internal.server.Param;
+import org.kurento.client.AbstractBuilder;
+import org.kurento.client.AbstractMediaObject;
+import org.kurento.client.internal.client.RemoteObject;
+import org.kurento.client.internal.client.RemoteObjectFactory;
 
-public interface Sample2 {
+public class Sample2 extends AbstractMediaObject {
 
-	public String getAtt1();
-
-	public int getAtt2();
-
-	public float getAtt3();
-
-	public boolean getAtt4();
-
-	public interface Factory {
-		public Builder create(@Param("att1") String att1,
-				@Param("att2") int att2);
+	public Sample2(RemoteObject remoteObject, RemoteObjectFactory factory) {
+		super(remoteObject, factory);
 	}
 
-	public interface Builder extends RemoteObjectBuilder<Sample2> {
-		public Builder withAtt3(float att3);
-
-		public Builder att4();
+	public String getAtt1() {
+		return (String) remoteObject.invoke("getAtt1", null, String.class);
 	}
 
+	public int getAtt2() {
+		return (int) remoteObject.invoke("getAtt2", null, int.class);
+	}
+
+	public float getAtt3() {
+		return (float) remoteObject.invoke("getAtt3", null, float.class);
+	}
+
+	public boolean getAtt4() {
+		return (boolean) remoteObject.invoke("getAtt4", null, boolean.class);
+	}
+
+	public static class Builder extends AbstractBuilder<Sample2> {
+
+		public Builder(String att1, int att2, RemoteObjectFactory factory) {
+
+			super(Sample2.class, factory);
+			props.add("att1", att1);
+			props.add("att2", att2);
+		}
+
+		public Builder withAtt3(float att3) {
+			props.add("att3", att3);
+			return this;
+		}
+
+		public Builder att4() {
+			props.add("att4", Boolean.TRUE);
+			return this;
+		}
+	}
 }

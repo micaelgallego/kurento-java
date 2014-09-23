@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kurento.client.internal.client.RemoteObjectFactory;
-import org.kurento.client.internal.client.RemoteObjectTypedFactory;
 import org.kurento.client.internal.test.model.client.ComplexParam;
 import org.kurento.client.internal.test.model.client.SampleClass;
 import org.kurento.client.internal.test.model.client.SampleEnum;
@@ -21,23 +20,24 @@ import org.kurento.jsonrpc.client.JsonRpcClientLocal;
 
 public class SyncConstMethodsTest {
 
-	private static RemoteObjectTypedFactory factory;
+	private static RemoteObjectFactory factory;
 
 	@BeforeClass
 	public static void initFactory() {
-		factory = new RemoteObjectTypedFactory(new RemoteObjectFactory(
-				new RomClientJsonRpcClient(new JsonRpcClientLocal(
-						new RomServerJsonRpcHandler(
-								"org.kurento.client.internal.test.model.server",
-								"Impl")))));
+		factory = new RemoteObjectFactory(
+				new RomClientJsonRpcClient(
+						new JsonRpcClientLocal(
+								new RomServerJsonRpcHandler(
+										"org.kurento.client.internal.test.model.server",
+										"Impl"))));
 	}
 
 	private SampleClass obj;
 
 	@Before
 	public void initObject() {
-		obj = factory.getFactory(SampleClass.Factory.class)
-				.create("XXX", false).withAtt3(0.5f).withAtt4(22).build();
+		obj = new SampleClass.Builder("XXX", false, factory).withAtt3(0.5f)
+				.withAtt4(22).build();
 	}
 
 	@Test
