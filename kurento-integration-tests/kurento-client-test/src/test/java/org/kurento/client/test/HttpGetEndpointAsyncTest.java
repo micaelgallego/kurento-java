@@ -107,7 +107,7 @@ public class HttpGetEndpointAsyncTest extends MediaPipelineAsyncBaseTest {
 			IOException {
 
 		final PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline,URL_SMALL)
-				.build();
+				.create();
 
 		player.connect(httpEp);
 
@@ -150,7 +150,7 @@ public class HttpGetEndpointAsyncTest extends MediaPipelineAsyncBaseTest {
 			IOException {
 
 		final PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline,URL_SMALL)
-				.build();
+				.create();
 
 		player.connect(httpEp);
 

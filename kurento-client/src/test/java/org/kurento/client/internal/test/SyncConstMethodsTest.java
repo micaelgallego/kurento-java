@@ -37,7 +37,7 @@ public class SyncConstMethodsTest {
 	@Before
 	public void initObject() {
 		obj = new SampleClass.Builder("XXX", false, factory).withAtt3(0.5f)
-				.withAtt4(22).build();
+				.withAtt4(22).create();
 	}
 
 	@Test

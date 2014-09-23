@@ -61,9 +61,9 @@ public class RecorderWebRtcTest extends BrowserKurentoClientTest {
 			throws InterruptedException {
 		// Media Pipeline #1
 		MediaPipeline mp = kurentoClient.createMediaPipeline();
-		WebRtcEndpoint webRtcEP = new WebRtcEndpoint.Builder(mp).build();
+		WebRtcEndpoint webRtcEP = new WebRtcEndpoint.Builder(mp).create();
 		RecorderEndpoint recorderEP = new RecorderEndpoint.Builder(mp,
-				FILE_SCHEMA + getDefaultFileForRecording()).build();
+				FILE_SCHEMA + getDefaultFileForRecording()).create();
 		webRtcEP.connect(webRtcEP);
 		webRtcEP.connect(recorderEP);
 
@@ -106,9 +106,9 @@ public class RecorderWebRtcTest extends BrowserKurentoClientTest {
 		// Media Pipeline #2
 		MediaPipeline mp2 = kurentoClient.createMediaPipeline();
 		PlayerEndpoint playerEP = new PlayerEndpoint.Builder(mp2, FILE_SCHEMA
-				+ getDefaultFileForRecording()).build();
+				+ getDefaultFileForRecording()).create();
 		HttpGetEndpoint httpEP = new HttpGetEndpoint.Builder(mp2)
-				.terminateOnEOS().build();
+				.terminateOnEOS().create();
 		playerEP.connect(httpEP);
 
 		// Test execution #2. Play the recorded video

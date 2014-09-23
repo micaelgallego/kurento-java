@@ -54,10 +54,10 @@ public class PlayerZBarBrowserTest extends BrowserKurentoClientTest {
 		// Media Pipeline
 		MediaPipeline mp = kurentoClient.createMediaPipeline();
 		PlayerEndpoint playerEP = new PlayerEndpoint.Builder(mp,
-				"http://files.kurento.org/video/barcodes.webm").build();
+				"http://files.kurento.org/video/barcodes.webm").create();
 		HttpGetEndpoint httpEP = new HttpGetEndpoint.Builder(mp)
-				.terminateOnEOS().build();
-		ZBarFilter zBarFilter = new ZBarFilter.Builder(mp).build();
+				.terminateOnEOS().create();
+		ZBarFilter zBarFilter = new ZBarFilter.Builder(mp).create();
 		playerEP.connect(zBarFilter);
 		zBarFilter.connect(httpEP);
 

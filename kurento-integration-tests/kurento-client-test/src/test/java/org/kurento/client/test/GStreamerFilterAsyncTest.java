@@ -46,7 +46,7 @@ public class GStreamerFilterAsyncTest extends MediaPipelineAsyncBaseTest {
 
 	@Before
 	public void setupMediaElements() {
-		player = new PlayerEndpoint.Builder(pipeline, URL_PLATES).build();
+		player = new PlayerEndpoint.Builder(pipeline, URL_PLATES).create();
 	}
 
 	@After

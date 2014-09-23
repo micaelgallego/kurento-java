@@ -76,8 +76,8 @@ public class WebRtcHandler extends DefaultJsonRpcHandler<JsonObject> {
 
 		// Media Logic
 		WebRtcEndpoint webRtcEndpoint = new WebRtcEndpoint.Builder(
-				room.getPipeline()).build();
-		HubPort port = new HubPort.Builder(room.getComposite()).build();
+				room.getPipeline()).create();
+		HubPort port = new HubPort.Builder(room.getComposite()).create();
 		webRtcEndpoint.connect(port);
 		port.connect(webRtcEndpoint);
 		room.joinParticipant(session, webRtcEndpoint, port);

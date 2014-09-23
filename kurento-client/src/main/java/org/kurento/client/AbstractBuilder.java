@@ -49,7 +49,7 @@ public class AbstractBuilder<T> {
 	 * @return <T> The type of object
 	 *
 	 **/
-	public T build() {
+	public T create() {
 
 		RemoteObject remoteObject = factory
 				.create(clazz.getSimpleName(), props);

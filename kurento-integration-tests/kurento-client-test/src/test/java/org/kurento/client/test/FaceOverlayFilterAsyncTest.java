@@ -42,7 +42,7 @@ public class FaceOverlayFilterAsyncTest extends MediaPipelineAsyncBaseTest {
 	@Before
 	public void setupMediaElements() throws InterruptedException {
 
-		player = new PlayerEndpoint.Builder(pipeline,URL_POINTER_DETECTOR).build();
+		player = new PlayerEndpoint.Builder(pipeline,URL_POINTER_DETECTOR).create();
 
 		AsyncResultManager<FaceOverlayFilter> async = new AsyncResultManager<>(
 				"FaceOverlayFilter creation");

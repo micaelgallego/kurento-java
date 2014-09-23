@@ -71,13 +71,13 @@ public class RecorderFaceOverlayTest extends BrowserKurentoClientTest {
 		// Media Pipeline #1
 		MediaPipeline mp = kurentoClient.createMediaPipeline();
 		PlayerEndpoint playerEP = new PlayerEndpoint.Builder(mp,
-				"http://files.kurento.org/video/fiwarecut.mp4").build();
+				"http://files.kurento.org/video/fiwarecut.mp4").create();
 		HttpGetEndpoint httpEP = new HttpGetEndpoint.Builder(mp)
-				.terminateOnEOS().build();
+				.terminateOnEOS().create();
 		RecorderEndpoint recorderEP = new RecorderEndpoint.Builder(mp,
-				FILE_SCHEMA + getDefaultFileForRecording()).build();
+				FILE_SCHEMA + getDefaultFileForRecording()).create();
 		final FaceOverlayFilter filter = new FaceOverlayFilter.Builder(mp)
-				.build();
+				.create();
 		filter.setOverlayedImage(
 				"http://files.kurento.org/imgs/red-square.png", -0.2F, -1.2F,
 				1.6F, 1.6F);
@@ -95,9 +95,9 @@ public class RecorderFaceOverlayTest extends BrowserKurentoClientTest {
 		// Media Pipeline #2
 		MediaPipeline mp2 = kurentoClient.createMediaPipeline();
 		PlayerEndpoint playerEP2 = new PlayerEndpoint.Builder(mp2, FILE_SCHEMA
-				+ getDefaultFileForRecording()).build();
+				+ getDefaultFileForRecording()).create();
 		HttpGetEndpoint httpEP2 = new HttpGetEndpoint.Builder(mp2)
-				.terminateOnEOS().build();
+				.terminateOnEOS().create();
 		playerEP2.connect(httpEP2);
 
 		// Test execution #2. Play the recorded video

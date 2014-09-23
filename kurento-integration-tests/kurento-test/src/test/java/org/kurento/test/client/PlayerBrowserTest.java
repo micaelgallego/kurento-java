@@ -63,9 +63,9 @@ public class PlayerBrowserTest extends BrowserKurentoClientTest {
 		// Media Pipeline
 		MediaPipeline mp = kurentoClient.createMediaPipeline();
 		PlayerEndpoint playerEP = new PlayerEndpoint.Builder(mp,
-				"http://files.kurento.org/video/10sec/blue.webm").build();
+				"http://files.kurento.org/video/10sec/blue.webm").create();
 		HttpGetEndpoint httpEP = new HttpGetEndpoint.Builder(mp)
-				.terminateOnEOS().build();
+				.terminateOnEOS().create();
 		playerEP.connect(httpEP);
 
 		// Test execution

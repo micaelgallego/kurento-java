@@ -31,10 +31,10 @@ public class KurentoControlServerClientTest {
 		MediaPipeline pipeline = kurentoClient.createMediaPipeline();
 
 		PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline,
-				"http://files.kurento.org/video/small.webm").build();
+				"http://files.kurento.org/video/small.webm").create();
 
 		HttpGetEndpoint httpGetEndpoint = new HttpGetEndpoint.Builder(pipeline)
-				.build();
+				.create();
 
 		player.connect(httpGetEndpoint);
 

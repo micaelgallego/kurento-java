@@ -74,9 +74,9 @@ public class RtpEndpointAsyncTest extends SdpAsyncBaseTest<RtpEndpoint> {
 			throws InterruptedException {
 
 		PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline,URL_BARCODES)
-				.build();
+				.create();
 
-		RtpEndpoint rtpEndpoint = new RtpEndpoint.Builder(pipeline).build();
+		RtpEndpoint rtpEndpoint = new RtpEndpoint.Builder(pipeline).create();
 
 		String requestSdp = "v=0\r\n"
 				+ "o=- 12345 12345 IN IP4 95.125.31.136\r\n" + "s=-\r\n"

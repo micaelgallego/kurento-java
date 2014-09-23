@@ -27,7 +27,7 @@ public class RomInterfaceImplTest {
 
 	@Before
 	public void initObject() {
-		obj = new SampleRemoteClass.Builder(factory).build();
+		obj = new SampleRemoteClass.Builder(factory).create();
 	}
 
 	@Test

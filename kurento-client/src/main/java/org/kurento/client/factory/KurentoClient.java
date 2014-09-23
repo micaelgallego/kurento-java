@@ -52,7 +52,7 @@ public class KurentoClient {
 	 */
 	public MediaPipeline createMediaPipeline() {
 		return new AbstractBuilder<MediaPipeline>(MediaPipeline.class, factory)
-				.build();
+				.create();
 	}
 
 	/**

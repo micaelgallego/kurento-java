@@ -62,23 +62,23 @@ public class CompositePlayerTest extends BrowserKurentoClientTest {
 		// Media Pipeline
 		MediaPipeline mp = kurentoClient.createMediaPipeline();
 		PlayerEndpoint playerRed = new PlayerEndpoint.Builder(mp,
-				"http://files.kurento.org/video/60sec/red.webm").build();
+				"http://files.kurento.org/video/60sec/red.webm").create();
 		PlayerEndpoint playerGreen = new PlayerEndpoint.Builder(mp,
-				"http://files.kurento.org/video/60sec/green.webm").build();
+				"http://files.kurento.org/video/60sec/green.webm").create();
 		PlayerEndpoint playerBlue = new PlayerEndpoint.Builder(mp,
-				"http://files.kurento.org/video/60sec/blue.webm").build();
+				"http://files.kurento.org/video/60sec/blue.webm").create();
 		PlayerEndpoint playerWhite = new PlayerEndpoint.Builder(mp,
-				"http://files.kurento.org/video/60sec/white.webm").build();
+				"http://files.kurento.org/video/60sec/white.webm").create();
 
-		Composite composite = new Composite.Builder(mp).build();
-		HubPort hubPort1 = new HubPort.Builder(composite).build();
-		HubPort hubPort2 = new HubPort.Builder(composite).build();
-		HubPort hubPort3 = new HubPort.Builder(composite).build();
-		HubPort hubPort4 = new HubPort.Builder(composite).build();
-		HubPort hubPort5 = new HubPort.Builder(composite).build();
+		Composite composite = new Composite.Builder(mp).create();
+		HubPort hubPort1 = new HubPort.Builder(composite).create();
+		HubPort hubPort2 = new HubPort.Builder(composite).create();
+		HubPort hubPort3 = new HubPort.Builder(composite).create();
+		HubPort hubPort4 = new HubPort.Builder(composite).create();
+		HubPort hubPort5 = new HubPort.Builder(composite).create();
 
 		HttpGetEndpoint httpEP = new HttpGetEndpoint.Builder(mp)
-				.terminateOnEOS().build();
+				.terminateOnEOS().create();
 		playerRed.connect(hubPort1);
 		playerGreen.connect(hubPort2);
 		playerBlue.connect(hubPort3);

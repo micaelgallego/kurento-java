@@ -45,7 +45,7 @@ public class Room {
 	@PostConstruct
 	private void init() {
 		mp = mpf.createMediaPipeline();
-		composite = new Composite.Builder(mp).build();
+		composite = new Composite.Builder(mp).create();
 	}
 
 	public MediaPipeline getPipeline() {

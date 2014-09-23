@@ -75,7 +75,7 @@ public class RtpEndpointAsync2Test extends MediaPipelineAsyncBaseTest {
 	@Test
 	public void testSourceSinks() throws KurentoException, InterruptedException {
 
-		RtpEndpoint rtp = new RtpEndpoint.Builder(pipeline).build();
+		RtpEndpoint rtp = new RtpEndpoint.Builder(pipeline).create();
 
 		AsyncResultManager<List<MediaSource>> asyncMediaSource = new AsyncResultManager<>(
 				"rtp.getMediaSrcs() invocation");
@@ -104,9 +104,9 @@ public class RtpEndpointAsync2Test extends MediaPipelineAsyncBaseTest {
 	public void testConnect() throws InterruptedException {
 
 		PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline, URL_SMALL)
-				.build();
+				.create();
 
-		HttpEndpoint http = new HttpGetEndpoint.Builder(pipeline).build();
+		HttpEndpoint http = new HttpGetEndpoint.Builder(pipeline).create();
 
 		AsyncResultManager<Void> async = new AsyncResultManager<>(
 				"player.connect() invocation");
@@ -121,8 +121,8 @@ public class RtpEndpointAsync2Test extends MediaPipelineAsyncBaseTest {
 	@Test
 	public void testConnectByType() throws InterruptedException {
 		PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline, URL_SMALL)
-				.build();
-		HttpEndpoint http = new HttpGetEndpoint.Builder(pipeline).build();
+				.create();
+		HttpEndpoint http = new HttpGetEndpoint.Builder(pipeline).create();
 
 		AsyncResultManager<Void> asyncAudio = new AsyncResultManager<>(
 				"player.connect(AUDIO) invocation");

@@ -61,12 +61,12 @@ public class DispatcherPlayerTest extends BrowserKurentoClientTest {
 		MediaPipeline mp = kurentoClient.createMediaPipeline();
 
 		PlayerEndpoint playerEP = new PlayerEndpoint.Builder(mp,
-				"http://files.kurento.org/video/30sec/red.webm").build();
-		WebRtcEndpoint webRtcEP = new WebRtcEndpoint.Builder(mp).build();
+				"http://files.kurento.org/video/30sec/red.webm").create();
+		WebRtcEndpoint webRtcEP = new WebRtcEndpoint.Builder(mp).create();
 
-		Dispatcher dispatcher = new Dispatcher.Builder(mp).build();
-		HubPort hubPort1 = new HubPort.Builder(dispatcher).build();
-		HubPort hubPort2 = new HubPort.Builder(dispatcher).build();
+		Dispatcher dispatcher = new Dispatcher.Builder(mp).create();
+		HubPort hubPort1 = new HubPort.Builder(dispatcher).create();
+		HubPort hubPort2 = new HubPort.Builder(dispatcher).create();
 
 		playerEP.connect(hubPort1);
 		hubPort2.connect(webRtcEP);

@@ -54,7 +54,7 @@ public class ZBarFilterTest extends MediaPipelineBaseTest {
 
 	@Before
 	public void setupMediaElements() {
-		zbar = new ZBarFilter.Builder(pipeline).build();
+		zbar = new ZBarFilter.Builder(pipeline).create();
 	}
 
 	@After
@@ -66,7 +66,7 @@ public class ZBarFilterTest extends MediaPipelineBaseTest {
 	public void testCodeFoundEvent() throws InterruptedException {
 
 		PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline,URL_BARCODES)
-				.build();
+				.create();
 		player.connect(zbar);
 
 		AsyncEventManager<CodeFoundEvent> async = new AsyncEventManager<>(

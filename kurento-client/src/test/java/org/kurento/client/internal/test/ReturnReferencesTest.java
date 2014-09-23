@@ -34,10 +34,10 @@ public class ReturnReferencesTest {
 	public void objectRefTest() {
 
 		SampleClass obj = new SampleClass.Builder("AAA", false, factory)
-				.withAtt3(0.5f).withAtt4(22).build();
+				.withAtt3(0.5f).withAtt4(22).create();
 
 		SampleClass obj2 = new SampleClass.Builder("BBB", false, factory)
-				.withAtt3(0.5f).withAtt4(22).build();
+				.withAtt3(0.5f).withAtt4(22).create();
 
 		SampleClass obj3 = obj.echoObjectRef(obj2);
 
@@ -49,10 +49,10 @@ public class ReturnReferencesTest {
 	public void objectRefTestAsync() throws InterruptedException {
 
 		SampleClass obj = new SampleClass.Builder("AAA", false, factory)
-				.withAtt3(0.5f).withAtt4(22).build();
+				.withAtt3(0.5f).withAtt4(22).create();
 
 		final SampleClass obj2 = new SampleClass.Builder("BBB", false, factory)
-				.withAtt3(0.5f).withAtt4(22).build();
+				.withAtt3(0.5f).withAtt4(22).create();
 
 		final BlockingQueue<SampleClass> queue = new ArrayBlockingQueue<>(1);
 
