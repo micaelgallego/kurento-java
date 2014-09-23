@@ -12,16 +12,12 @@
  * Lesser General Public License for more details.
  *
  */
-package org.kurento.client.factory;
+package org.kurento.client;
 
 import javax.annotation.PreDestroy;
 
-import org.kurento.client.AbstractBuilder;
-import org.kurento.client.Continuation;
-import org.kurento.client.MediaPipeline;
 import org.kurento.client.internal.client.RemoteObjectFactory;
 import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient;
-import org.kurento.commons.exception.KurentoException;
 import org.kurento.jsonrpc.client.JsonRpcClient;
 import org.kurento.jsonrpc.client.JsonRpcClientWebSocket;
 
@@ -45,31 +41,8 @@ public class KurentoClient {
 				client));
 	}
 
-	/**
-	 * Creates a new {@link MediaPipeline} in the media server
-	 *
-	 * @return The media pipeline
-	 */
-	public MediaPipeline createMediaPipeline() {
-		return new AbstractBuilder<MediaPipeline>(MediaPipeline.class, factory)
-				.create();
-	}
-
-	/**
-	 * Creates a new {@link MediaPipeline} in the media server
-	 *
-	 * @param cont
-	 *            An asynchronous callback handler. If the element was
-	 *            successfully created, the {@code onSuccess} method from the
-	 *            handler will receive a {@link MediaPipeline} stub from the
-	 *            media server.
-	 * @throws KurentoException
-	 *
-	 */
-	public void createMediaPipeline(final Continuation<MediaPipeline> cont)
-			throws KurentoException {
-		new AbstractBuilder<MediaPipeline>(MediaPipeline.class, factory)
-				.buildAsync(cont);
+	public RemoteObjectFactory getFactory() {
+		return factory;
 	}
 
 	@PreDestroy

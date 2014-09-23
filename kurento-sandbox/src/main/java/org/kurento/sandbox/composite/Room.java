@@ -22,9 +22,9 @@ import javax.annotation.PostConstruct;
 
 import org.kurento.client.Composite;
 import org.kurento.client.HubPort;
+import org.kurento.client.KurentoClient;
 import org.kurento.client.MediaPipeline;
 import org.kurento.client.WebRtcEndpoint;
-import org.kurento.client.factory.KurentoClient;
 import org.kurento.jsonrpc.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class Room {
 	// private final Logger log = LoggerFactory.getLogger(Room.class);
 	@Autowired
-	private KurentoClient mpf;
+	private KurentoClient kurento;
 
 	private MediaPipeline mp;
 	private Composite composite;
@@ -44,7 +44,7 @@ public class Room {
 
 	@PostConstruct
 	private void init() {
-		mp = mpf.createMediaPipeline();
+		mp = MediaPipeline.with(kurento).create();
 		composite = Composite.with(mp).create();
 	}
 

@@ -99,7 +99,7 @@ public class GridWebRtcTest extends GridBrowserKurentoClientTest {
 
 	public void doTest(Node node, Color color) {
 		// Media Pipeline
-		MediaPipeline mp = kurentoClient.createMediaPipeline();
+		MediaPipeline mp = MediaPipeline.with(kurentoClient).create();
 		WebRtcEndpoint webRtcEndpoint = WebRtcEndpoint.with(mp).create();
 		webRtcEndpoint.connect(webRtcEndpoint);
 

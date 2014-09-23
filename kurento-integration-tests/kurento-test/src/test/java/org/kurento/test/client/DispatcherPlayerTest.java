@@ -58,7 +58,7 @@ public class DispatcherPlayerTest extends BrowserKurentoClientTest {
 
 	public void doTest(Browser browserType) throws Exception {
 		// Media Pipeline
-		MediaPipeline mp = kurentoClient.createMediaPipeline();
+		MediaPipeline mp = MediaPipeline.with(kurentoClient).create();
 
 		PlayerEndpoint playerEP = PlayerEndpoint.with(mp,
 				"http://files.kurento.org/video/30sec/red.webm").create();

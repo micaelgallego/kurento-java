@@ -60,7 +60,7 @@ public class RecorderWebRtcTest extends BrowserKurentoClientTest {
 	public void doTest(Browser browserType, String video, Color color)
 			throws InterruptedException {
 		// Media Pipeline #1
-		MediaPipeline mp = kurentoClient.createMediaPipeline();
+		MediaPipeline mp = MediaPipeline.with(kurentoClient).create();
 		WebRtcEndpoint webRtcEP = WebRtcEndpoint.with(mp).create();
 		RecorderEndpoint recorderEP = RecorderEndpoint.with(mp,
 				FILE_SCHEMA + getDefaultFileForRecording()).create();
@@ -104,7 +104,7 @@ public class RecorderWebRtcTest extends BrowserKurentoClientTest {
 		mp.release();
 
 		// Media Pipeline #2
-		MediaPipeline mp2 = kurentoClient.createMediaPipeline();
+		MediaPipeline mp2 = MediaPipeline.with(kurentoClient).create();
 		PlayerEndpoint playerEP = PlayerEndpoint.with(mp2, FILE_SCHEMA
 				+ getDefaultFileForRecording()).create();
 		HttpGetEndpoint httpEP = HttpGetEndpoint.with(mp2)

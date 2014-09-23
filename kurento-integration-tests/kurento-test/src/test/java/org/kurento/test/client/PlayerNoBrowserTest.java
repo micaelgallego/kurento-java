@@ -50,7 +50,7 @@ public class PlayerNoBrowserTest extends KurentoClientTest {
 	@Test
 	public void testPlayer() throws Exception {
 		// Media Pipeline
-		MediaPipeline mp = kurentoClient.createMediaPipeline();
+		MediaPipeline mp = MediaPipeline.with(kurentoClient).create();
 		PlayerEndpoint playerEP = PlayerEndpoint.with(mp,
 				"http://files.kurento.org/video/small.webm").create();
 		HttpGetEndpoint httpEP = HttpGetEndpoint.with(mp)

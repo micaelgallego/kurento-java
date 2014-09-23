@@ -14,7 +14,7 @@
  */
 package org.kurento.sandbox.composite;
 
-import org.kurento.client.factory.KurentoClient;
+import org.kurento.client.KurentoClient;
 import org.kurento.jsonrpc.internal.server.config.JsonRpcConfiguration;
 import org.kurento.jsonrpc.server.JsonRpcConfigurer;
 import org.kurento.jsonrpc.server.JsonRpcHandlerRegistry;

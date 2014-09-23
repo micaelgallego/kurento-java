@@ -43,7 +43,7 @@ public abstract class MediaPipelineAsyncBaseTest extends KurentoClientTest {
 		AsyncResultManager<MediaPipeline> async = new AsyncResultManager<>(
 				"MediaPipeline creation");
 
-		kurentoClient.createMediaPipeline(async.getContinuation());
+		MediaPipeline.with(kurentoClient).createAsync(async.getContinuation());
 
 		pipeline = async.waitForResult();
 

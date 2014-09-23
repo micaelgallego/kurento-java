@@ -58,13 +58,13 @@ public class RtpEndpointAsyncTest extends SdpAsyncBaseTest<RtpEndpoint> {
 
 		AsyncResultManager<RtpEndpoint> async = new AsyncResultManager<>(
 				"RtpEndpoint creation");
-		RtpEndpoint.with(pipeline).buildAsync(async.getContinuation());
+		RtpEndpoint.with(pipeline).createAsync(async.getContinuation());
 		sdp = async.waitForResult();
 		Assert.assertNotNull(sdp);
 
 		AsyncResultManager<RtpEndpoint> async2 = new AsyncResultManager<>(
 				"RtpEndpoint creation");
-		RtpEndpoint.with(pipeline).buildAsync(async2.getContinuation());
+		RtpEndpoint.with(pipeline).createAsync(async2.getContinuation());
 		sdp2 = async2.waitForResult();
 		Assert.assertNotNull(sdp2);
 	}

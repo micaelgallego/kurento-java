@@ -86,7 +86,7 @@ public class AbstractBuilder<T> {
 	 *
 	 *
 	 **/
-	public void buildAsync(final Continuation<T> continuation) {
+	public void createAsync(final Continuation<T> continuation) {
 
 		factory.create(clazz.getSimpleName(), props,
 				new DefaultContinuation<RemoteObject>(continuation) {

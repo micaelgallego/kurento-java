@@ -38,7 +38,7 @@ public class RtpEndpointAsync2Test extends MediaPipelineAsyncBaseTest {
 
 		AsyncResultManager<RtpEndpoint> async = new AsyncResultManager<>(
 				"RtpEndpoint creation");
-		RtpEndpoint.with(pipeline).buildAsync(async.getContinuation());
+		RtpEndpoint.with(pipeline).createAsync(async.getContinuation());
 		RtpEndpoint rtp = async.waitForResult();
 
 		AsyncResultManager<String> asyncGenerateOffer = new AsyncResultManager<>(

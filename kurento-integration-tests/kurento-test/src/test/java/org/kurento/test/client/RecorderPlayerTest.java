@@ -65,7 +65,7 @@ public class RecorderPlayerTest extends BrowserKurentoClientTest {
 
 	public void doTest(Browser browserType) throws Exception {
 		// Media Pipeline #1
-		MediaPipeline mp = kurentoClient.createMediaPipeline();
+		MediaPipeline mp = MediaPipeline.with(kurentoClient).create();
 		PlayerEndpoint playerEP = PlayerEndpoint.with(mp,
 				"http://files.kurento.org/video/10sec/green.webm").create();
 		HttpGetEndpoint httpEP = HttpGetEndpoint.with(mp)
@@ -82,7 +82,7 @@ public class RecorderPlayerTest extends BrowserKurentoClientTest {
 		mp.release();
 
 		// Media Pipeline #2
-		MediaPipeline mp2 = kurentoClient.createMediaPipeline();
+		MediaPipeline mp2 = MediaPipeline.with(kurentoClient).create();
 		PlayerEndpoint playerEP2 = PlayerEndpoint.with(mp2, FILE_SCHEMA
 				+ getDefaultFileForRecording()).create();
 		HttpGetEndpoint httpEP2 = HttpGetEndpoint.with(mp2)

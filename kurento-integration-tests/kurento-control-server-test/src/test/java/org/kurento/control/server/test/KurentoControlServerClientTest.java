@@ -9,9 +9,9 @@ import java.io.IOException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.kurento.client.HttpGetEndpoint;
+import org.kurento.client.KurentoClient;
 import org.kurento.client.MediaPipeline;
 import org.kurento.client.PlayerEndpoint;
-import org.kurento.client.factory.KurentoClient;
 import org.kurento.commons.testing.KurentoControlServerTests;
 import org.kurento.control.server.KurentoControlServerApp;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -28,7 +28,7 @@ public class KurentoControlServerClientTest {
 		KurentoClient kurentoClient = KurentoClient
 				.create("ws://127.0.0.1:8888/kurento");
 
-		MediaPipeline pipeline = kurentoClient.createMediaPipeline();
+		MediaPipeline pipeline = MediaPipeline.with(kurentoClient).create();
 
 		PlayerEndpoint player = PlayerEndpoint.with(pipeline,
 				"http://files.kurento.org/video/small.webm").create();

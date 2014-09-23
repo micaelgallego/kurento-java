@@ -14,7 +14,7 @@ import static org.kurento.test.services.KurentoServicesTestHelper.KMS_WS_URI_PRO
 import java.lang.reflect.Constructor;
 import java.security.InvalidParameterException;
 
-import org.kurento.client.factory.KurentoClient;
+import org.kurento.client.KurentoClient;
 import org.kurento.commons.Address;
 import org.kurento.jsonrpc.client.JsonRpcClient;
 import org.kurento.jsonrpc.client.JsonRpcClientWebSocket;

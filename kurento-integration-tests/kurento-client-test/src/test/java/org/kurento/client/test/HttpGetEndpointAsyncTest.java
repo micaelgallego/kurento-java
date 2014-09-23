@@ -68,7 +68,7 @@ public class HttpGetEndpointAsyncTest extends MediaPipelineAsyncBaseTest {
 		AsyncResultManager<HttpGetEndpoint> async = new AsyncResultManager<>(
 				"HttpGetEndpoint creation");
 
-		HttpGetEndpoint.with(pipeline).buildAsync(async.getContinuation());
+		HttpGetEndpoint.with(pipeline).createAsync(async.getContinuation());
 
 		httpEp = async.waitForResult();
 	}
