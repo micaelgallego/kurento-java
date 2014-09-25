@@ -16,8 +16,8 @@ package org.kurento.client.test;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.kurento.client.WebRtcEndpoint;
 import org.kurento.client.EventListener;
+import org.kurento.client.WebRtcEndpoint;
 import org.kurento.client.test.util.AsyncResultManager;
 import org.kurento.client.test.util.SdpAsyncBaseTest;
 
@@ -62,6 +62,8 @@ public class WebRtcEndpointAsyncTest extends SdpAsyncBaseTest<WebRtcEndpoint> {
 		WebRtcEndpoint.with(pipeline).createAsync(async2.getContinuation());
 		sdp2 = async2.waitForResult();
 		Assert.assertNotNull(sdp2);
+
+		pipeline.start();
 	}
 
 }

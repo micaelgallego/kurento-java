@@ -8,7 +8,7 @@ import org.kurento.client.Continuation;
 import org.kurento.client.EventListener;
 import org.kurento.client.ListenerSubscription;
 import org.kurento.client.internal.RemoteClass;
-import org.kurento.client.internal.client.RemoteObject;
+import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.server.Param;
 import org.kurento.client.internal.test.model.client.events.SampleEvent;
@@ -19,7 +19,7 @@ import com.google.common.reflect.TypeToken;
 @RemoteClass
 public class SampleClass extends AbstractMediaObject {
 
-	public SampleClass(RemoteObject remoteObject) {
+	public SampleClass(RemoteObjectFacade remoteObject) {
 		super(remoteObject);
 	}
 
@@ -193,6 +193,11 @@ public class SampleClass extends AbstractMediaObject {
 		public Builder withAtt4(int att4) {
 			props.add("att4", att4);
 			return this;
+		}
+
+		@Override
+		protected SampleClass createMediaObject(RemoteObjectFacade remoteObject) {
+			return new SampleClass(remoteObject);
 		}
 	}
 }

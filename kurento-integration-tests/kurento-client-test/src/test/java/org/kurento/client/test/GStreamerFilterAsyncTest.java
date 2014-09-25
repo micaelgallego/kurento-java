@@ -57,12 +57,13 @@ public class GStreamerFilterAsyncTest extends MediaPipelineAsyncBaseTest {
 	@Test
 	public void testInstantiation() throws InterruptedException {
 
+		pipeline.start();
+
 		AsyncResultManager<GStreamerFilter> async = new AsyncResultManager<GStreamerFilter>(
 				"GStreamerFilter creation");
 
-		GStreamerFilter.with(pipeline,
-				"videoflip method=horizontal-flip").createAsync(async
-				.getContinuation());
+		GStreamerFilter.with(pipeline, "videoflip method=horizontal-flip")
+				.createAsync(async.getContinuation());
 
 		filter = async.waitForResult();
 

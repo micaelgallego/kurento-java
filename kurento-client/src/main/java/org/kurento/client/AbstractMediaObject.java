@@ -16,11 +16,29 @@ public class AbstractMediaObject {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractMediaObject.class);
 
-	protected final RemoteObjectFacade remoteObject;
+	private MediaPipeline internalMediaPipeline;
 
-	protected AbstractMediaObject(RemoteObject remoteObject) {
+	protected RemoteObjectFacade remoteObject;
+
+	protected AbstractMediaObject(RemoteObjectFacade remoteObject) {
+		setRemoteObject(remoteObject);
+	}
+
+	public void setInternalMediaPipeline(MediaPipeline internalMediaPipeline) {
+		this.internalMediaPipeline = internalMediaPipeline;
+	}
+
+	public MediaPipeline getInternalMediaPipeline() {
+		return internalMediaPipeline;
+	}
+
+	public boolean isReady() {
+		return remoteObject instanceof RemoteObject;
+	}
+
+	public void setRemoteObject(RemoteObjectFacade remoteObject) {
 		this.remoteObject = remoteObject;
-		this.remoteObject.setWrapperForUnflatten(this);
+		this.remoteObject.setPublicObject(this);
 	}
 
 	protected ListenerSubscription subscribeEventListener(

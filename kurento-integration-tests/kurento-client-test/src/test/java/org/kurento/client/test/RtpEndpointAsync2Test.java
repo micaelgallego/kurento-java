@@ -41,6 +41,8 @@ public class RtpEndpointAsync2Test extends MediaPipelineAsyncBaseTest {
 		RtpEndpoint.with(pipeline).createAsync(async.getContinuation());
 		RtpEndpoint rtp = async.waitForResult();
 
+		pipeline.start();
+
 		AsyncResultManager<String> asyncGenerateOffer = new AsyncResultManager<>(
 				"rtp.generateOffer() invocation");
 		rtp.generateOffer(asyncGenerateOffer.getContinuation());
@@ -76,6 +78,8 @@ public class RtpEndpointAsync2Test extends MediaPipelineAsyncBaseTest {
 	public void testSourceSinks() throws KurentoException, InterruptedException {
 
 		RtpEndpoint rtp = RtpEndpoint.with(pipeline).create();
+
+		pipeline.start();
 
 		AsyncResultManager<List<MediaSource>> asyncMediaSource = new AsyncResultManager<>(
 				"rtp.getMediaSrcs() invocation");
@@ -113,6 +117,8 @@ public class RtpEndpointAsync2Test extends MediaPipelineAsyncBaseTest {
 		player.connect(http, async.getContinuation());
 		async.waitForResult();
 
+		pipeline.start();
+
 		player.play();
 		http.release();
 		player.release();
@@ -133,6 +139,8 @@ public class RtpEndpointAsync2Test extends MediaPipelineAsyncBaseTest {
 				"player.connect() invocation");
 		player.connect(http, VIDEO, asyncVideo.getContinuation());
 		asyncVideo.waitForResult();
+
+		pipeline.start();
 
 		player.play();
 		http.release();

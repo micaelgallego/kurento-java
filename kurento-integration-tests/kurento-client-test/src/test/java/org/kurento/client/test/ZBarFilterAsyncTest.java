@@ -91,6 +91,8 @@ public class ZBarFilterAsyncTest extends MediaPipelineAsyncBaseTest {
 			}
 		});
 
+		pipeline.start();
+
 		player.play();
 
 		CodeFoundEvent event = events.poll(10, TimeUnit.SECONDS);

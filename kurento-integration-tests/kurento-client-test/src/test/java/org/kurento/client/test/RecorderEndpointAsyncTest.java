@@ -50,12 +50,14 @@ public class RecorderEndpointAsyncTest extends MediaPipelineAsyncBaseTest {
 		AsyncResultManager<RecorderEndpoint> async = new AsyncResultManager<>(
 				"RecorderEndpoint creation");
 
-		RecorderEndpoint.with(pipeline,URL_SMALL).createAsync(
+		RecorderEndpoint.with(pipeline, URL_SMALL).createAsync(
 				async.getContinuation());
 
 		recorder = async.waitForResult();
 
 		Assert.assertNotNull(recorder);
+
+		pipeline.start();
 	}
 
 	@After

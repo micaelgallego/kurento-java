@@ -396,7 +396,7 @@ public class ParamsFlattener {
 		} else if (remoteObject instanceof RemoteObject) {
 			// We are in the client side
 			Object wrapper = ((RemoteObjectFacade) remoteObject)
-					.getWrapperForUnflatten();
+					.getPublicObject();
 			return (wrapper != null) ? wrapper : remoteObject;
 
 		} else {

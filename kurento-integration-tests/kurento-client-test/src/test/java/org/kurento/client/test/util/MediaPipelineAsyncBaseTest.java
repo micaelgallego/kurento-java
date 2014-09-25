@@ -24,7 +24,6 @@ import org.junit.experimental.categories.Category;
 import org.kurento.client.Continuation;
 import org.kurento.client.MediaObject;
 import org.kurento.client.MediaPipeline;
-import org.kurento.commons.exception.KurentoException;
 import org.kurento.commons.testing.KurentoClientTests;
 import org.kurento.test.base.KurentoClientTest;
 
@@ -72,7 +71,7 @@ public abstract class MediaPipelineAsyncBaseTest extends KurentoClientTest {
 
 				@Override
 				public void onError(Throwable cause) {
-					throw new KurentoException(cause);
+					Assert.fail(cause.getMessage());
 				}
 			});
 			Assert.assertTrue("Timeout of 25s releasing object",

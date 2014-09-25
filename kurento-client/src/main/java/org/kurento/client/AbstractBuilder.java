@@ -5,13 +5,12 @@
  */
 package org.kurento.client;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.kurento.client.internal.client.DefaultContinuation;
-import org.kurento.client.internal.client.RemoteObject;
+import org.kurento.client.internal.client.NonReadyRemoteObject;
 import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
-import org.kurento.commons.exception.KurentoException;
+import org.kurento.client.internal.client.operation.MediaObjectCreationOperation;
+import org.kurento.jsonrpc.Prop;
 import org.kurento.jsonrpc.Props;
 
 /**
@@ -24,17 +23,16 @@ import org.kurento.jsonrpc.Props;
  *            the type of object to build
  *
  **/
-public class AbstractBuilder<T> {
+public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 
 	protected final Props props;
-	private final RomManager manager;
+	private RomManager manager;
 	private final Class<?> clazz;
 
 	public AbstractBuilder(Class<?> clazz, MediaObject mediaObject) {
 
 		this.props = new Props();
 		this.clazz = clazz;
-		this.manager = ((AbstractMediaObject) mediaObject).getRomManager();
 	}
 
 	public AbstractBuilder(Class<?> clazz, RomManager manager) {
@@ -51,29 +49,105 @@ public class AbstractBuilder<T> {
 	 *
 	 **/
 	public T create() {
+		return create(null);
+	}
 
-		RemoteObjectFacade remoteObject = manager.create(clazz.getSimpleName(),
-				props);
+	public T create(final Continuation<T> continuation) {
 
-		return createMediaObject(remoteObject);
+		final AbstractMediaObject constObject = obtainConstructorObject();
+
+		T mediaObject;
+
+		DefaultContinuation<RemoteObjectFacade> defaultContinuation = new DefaultContinuation<RemoteObjectFacade>(
+				continuation) {
+			@Override
+			public void onSuccess(RemoteObjectFacade remoteObject) {
+				try {
+					T newMediaObject = createMediaObjectConst(constObject,
+							remoteObject);
+					continuation.onSuccess(newMediaObject);
+				} catch (Exception e) {
+					log.warn(
+							"[Continuation] error invoking onSuccess implemented by client",
+							e);
+				}
+			}
+		};
+
+		if (constObject == null || constObject.isReady()) {
+
+			if (manager == null && constObject != null) {
+				manager = constObject.getRomManager();
+			}
+
+			if (continuation == null) {
+
+				RemoteObjectFacade remoteObject = manager.create(
+						clazz.getSimpleName(), props);
+
+				mediaObject = createMediaObjectConst(constObject, remoteObject);
+
+			} else {
+
+				manager.create(clazz.getSimpleName(), props,
+						defaultContinuation);
+
+				return null;
+			}
+
+		} else {
+
+			MediaPipeline pipeline = constObject.getInternalMediaPipeline();
+
+			NonReadyRemoteObject remoteObject = new NonReadyRemoteObject(
+					pipeline);
+
+			mediaObject = createMediaObjectConst(constObject, remoteObject);
+
+			if (continuation != null) {
+				try {
+					continuation.onSuccess(mediaObject);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			MediaObjectCreationOperation op = new MediaObjectCreationOperation(
+					clazz.getSimpleName(), props, mediaObject);
+
+			pipeline.addOperation(op);
+		}
+
+		return mediaObject;
 	}
 
 	@SuppressWarnings("unchecked")
-	private T createMediaObject(RemoteObjectFacade remoteObject) {
-		try {
+	private T createMediaObjectConst(AbstractMediaObject constObject,
+			RemoteObjectFacade remoteObject) {
 
-			return (T) clazz.getConstructor(RemoteObject.class).newInstance(
-					remoteObject);
+		AbstractMediaObject mediaObject = createMediaObject(remoteObject);
 
-		} catch (InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			// TODO Auto-generated catch block
-			throw new KurentoException(
-					"Execption creating media object of type '"
-							+ clazz.getName() + "'", e);
+		if (constObject != null) {
+			mediaObject.setInternalMediaPipeline(constObject
+					.getInternalMediaPipeline());
 		}
+
+		return (T) mediaObject;
 	}
+
+	private AbstractMediaObject obtainConstructorObject() {
+		AbstractMediaObject rootObject = null;
+		for (Prop prop : props) {
+			Object value = prop.getValue();
+			if (value instanceof MediaPipeline || value instanceof Hub) {
+				rootObject = (AbstractMediaObject) value;
+				break;
+			}
+		}
+		return rootObject;
+	}
+
+	protected abstract T createMediaObject(RemoteObjectFacade remoteObject);
 
 	/**
 	 * Builds an object asynchronously using the builder design pattern.
@@ -87,22 +161,7 @@ public class AbstractBuilder<T> {
 	 *
 	 **/
 	public void createAsync(final Continuation<T> continuation) {
-
-		manager.create(clazz.getSimpleName(), props,
-				new DefaultContinuation<RemoteObject>(continuation) {
-					@Override
-					public void onSuccess(RemoteObject remoteObject) {
-						try {
-							continuation
-									.onSuccess(createMediaObject(remoteObject));
-						} catch (Exception e) {
-							log.warn(
-									"[Continuation] error invoking onSuccess implemented by client",
-									e);
-						}
-					}
-				});
-
+		create(continuation);
 	}
 
 }

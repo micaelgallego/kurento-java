@@ -23,18 +23,18 @@ public class RomManager implements ObjectRefsManager {
 		}
 	}
 
-	public RemoteObjectFacade create(String remoteClassName, Props constructorParams) {
-
+	public RemoteObject create(String remoteClassName, Props constructorParams) {
 		String objectRef = client.create(remoteClassName, constructorParams);
 		return new RemoteObject(objectRef, remoteClassName, this);
 	}
 
-	public RemoteObjectFacade create(String remoteClassName) {
+	public RemoteObject create(String remoteClassName) {
 		return create(remoteClassName, (Props) null);
 	}
 
 	public void create(final String remoteClassName,
-			final Props constructorParams, final Continuation<RemoteObject> cont) {
+			final Props constructorParams,
+			final Continuation<RemoteObjectFacade> cont) {
 
 		client.create(remoteClassName, constructorParams,
 				new Continuation<String>() {
@@ -63,7 +63,8 @@ public class RomManager implements ObjectRefsManager {
 				});
 	}
 
-	public void create(String remoteClassName, Continuation<RemoteObject> cont) {
+	public void create(String remoteClassName,
+			Continuation<RemoteObjectFacade> cont) {
 		create(remoteClassName, null, cont);
 	}
 

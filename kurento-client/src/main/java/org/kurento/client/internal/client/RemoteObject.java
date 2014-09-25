@@ -2,6 +2,7 @@ package org.kurento.client.internal.client;
 
 import java.lang.reflect.Type;
 
+import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.Continuation;
 import org.kurento.client.internal.transport.serialization.ParamsFlattener;
 import org.kurento.jsonrpc.Props;
@@ -31,7 +32,7 @@ public class RemoteObject implements RemoteObjectFacade {
 	// RemoteObject is used with a Typed wrapper (with reflexion, with code
 	// generation or by hand). In this cases, the object reference is unflatten
 	// to this value instead of RemoteObject itself.
-	private Object wrapperForUnflatten;
+	private AbstractMediaObject wrapperForUnflatten;
 
 	private final Multimap<String, RemoteObjectEventListener> listeners = Multimaps
 			.synchronizedMultimap(ArrayListMultimap
@@ -47,12 +48,12 @@ public class RemoteObject implements RemoteObjectFacade {
 	}
 
 	@Override
-	public Object getWrapperForUnflatten() {
+	public AbstractMediaObject getPublicObject() {
 		return wrapperForUnflatten;
 	}
 
 	@Override
-	public void setWrapperForUnflatten(Object wrapperForUnflatten) {
+	public void setPublicObject(AbstractMediaObject wrapperForUnflatten) {
 		this.wrapperForUnflatten = wrapperForUnflatten;
 	}
 

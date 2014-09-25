@@ -25,13 +25,13 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.kurento.client.HttpGetEndpoint;
-import org.kurento.client.ListenerSubscription;
-import org.kurento.client.PlayerEndpoint;
 import org.kurento.client.EndOfStreamEvent;
 import org.kurento.client.EventListener;
+import org.kurento.client.HttpGetEndpoint;
+import org.kurento.client.ListenerSubscription;
 import org.kurento.client.MediaSessionStartedEvent;
 import org.kurento.client.MediaSessionTerminatedEvent;
+import org.kurento.client.PlayerEndpoint;
 import org.kurento.client.test.util.AsyncEventManager;
 import org.kurento.client.test.util.AsyncResultManager;
 import org.kurento.client.test.util.MediaPipelineAsyncBaseTest;
@@ -71,6 +71,8 @@ public class HttpGetEndpointAsyncTest extends MediaPipelineAsyncBaseTest {
 		HttpGetEndpoint.with(pipeline).createAsync(async.getContinuation());
 
 		httpEp = async.waitForResult();
+
+		pipeline.start();
 	}
 
 	@After
@@ -106,7 +108,7 @@ public class HttpGetEndpointAsyncTest extends MediaPipelineAsyncBaseTest {
 	public void testEventMediaSessionStarted() throws InterruptedException,
 			IOException {
 
-		final PlayerEndpoint player = PlayerEndpoint.with(pipeline,URL_SMALL)
+		final PlayerEndpoint player = PlayerEndpoint.with(pipeline, URL_SMALL)
 				.create();
 
 		player.connect(httpEp);
@@ -141,7 +143,7 @@ public class HttpGetEndpointAsyncTest extends MediaPipelineAsyncBaseTest {
 
 	/**
 	 * Test for {@link MediaSessionTerminatedEvent}
-	 * 
+	 *
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
@@ -149,7 +151,7 @@ public class HttpGetEndpointAsyncTest extends MediaPipelineAsyncBaseTest {
 	public void testEventMediaSessionTerminated() throws InterruptedException,
 			IOException {
 
-		final PlayerEndpoint player = PlayerEndpoint.with(pipeline,URL_SMALL)
+		final PlayerEndpoint player = PlayerEndpoint.with(pipeline, URL_SMALL)
 				.create();
 
 		player.connect(httpEp);

@@ -19,11 +19,11 @@ import static org.kurento.client.test.RtpEndpoint2Test.URL_BARCODES;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kurento.client.CodeFoundEvent;
+import org.kurento.client.EventListener;
 import org.kurento.client.HttpEndpoint;
 import org.kurento.client.PlayerEndpoint;
 import org.kurento.client.ZBarFilter;
-import org.kurento.client.CodeFoundEvent;
-import org.kurento.client.EventListener;
 import org.kurento.client.test.util.AsyncEventManager;
 import org.kurento.client.test.util.MediaPipelineBaseTest;
 
@@ -65,7 +65,7 @@ public class ZBarFilterTest extends MediaPipelineBaseTest {
 	@Test
 	public void testCodeFoundEvent() throws InterruptedException {
 
-		PlayerEndpoint player = PlayerEndpoint.with(pipeline,URL_BARCODES)
+		PlayerEndpoint player = PlayerEndpoint.with(pipeline, URL_BARCODES)
 				.create();
 		player.connect(zbar);
 
@@ -73,6 +73,8 @@ public class ZBarFilterTest extends MediaPipelineBaseTest {
 				"CodeFound event");
 
 		zbar.addCodeFoundListener(async.getMediaEventListener());
+
+		pipeline.start();
 
 		player.play();
 

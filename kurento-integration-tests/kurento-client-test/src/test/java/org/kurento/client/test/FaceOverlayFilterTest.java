@@ -68,6 +68,8 @@ public class FaceOverlayFilterTest extends MediaPipelineBaseTest {
 
 		player.addEndOfStreamListener(async.getMediaEventListener());
 
+		pipeline.start();
+
 		player.play();
 
 		async.waitForResult();

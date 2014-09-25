@@ -19,10 +19,10 @@ import static org.kurento.client.test.RtpEndpoint2Test.URL_BARCODES;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.kurento.client.EventListener;
 import org.kurento.client.MediaType;
 import org.kurento.client.PlayerEndpoint;
 import org.kurento.client.RtpEndpoint;
-import org.kurento.client.EventListener;
 import org.kurento.client.test.util.AsyncResultManager;
 import org.kurento.client.test.util.SdpAsyncBaseTest;
 
@@ -67,13 +67,15 @@ public class RtpEndpointAsyncTest extends SdpAsyncBaseTest<RtpEndpoint> {
 		RtpEndpoint.with(pipeline).createAsync(async2.getContinuation());
 		sdp2 = async2.waitForResult();
 		Assert.assertNotNull(sdp2);
+
+		pipeline.start();
 	}
 
 	@Test
 	public void testRtpEndpointSimulatingAndroidSdp()
 			throws InterruptedException {
 
-		PlayerEndpoint player = PlayerEndpoint.with(pipeline,URL_BARCODES)
+		PlayerEndpoint player = PlayerEndpoint.with(pipeline, URL_BARCODES)
 				.create();
 
 		RtpEndpoint rtpEndpoint = RtpEndpoint.with(pipeline).create();

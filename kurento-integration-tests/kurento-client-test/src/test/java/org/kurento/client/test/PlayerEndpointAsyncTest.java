@@ -20,10 +20,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.kurento.client.ListenerSubscription;
-import org.kurento.client.PlayerEndpoint;
 import org.kurento.client.EndOfStreamEvent;
 import org.kurento.client.EventListener;
+import org.kurento.client.ListenerSubscription;
+import org.kurento.client.PlayerEndpoint;
 import org.kurento.client.test.util.AsyncEventManager;
 import org.kurento.client.test.util.AsyncResultManager;
 import org.kurento.client.test.util.MediaPipelineAsyncBaseTest;
@@ -60,11 +60,13 @@ public class PlayerEndpointAsyncTest extends MediaPipelineAsyncBaseTest {
 		AsyncResultManager<PlayerEndpoint> async = new AsyncResultManager<>(
 				"PlayerEndpoint creation");
 
-		PlayerEndpoint.with(pipeline,URL_SMALL).createAsync(
+		PlayerEndpoint.with(pipeline, URL_SMALL).createAsync(
 				async.getContinuation());
 
 		player = async.waitForResult();
 		Assert.assertNotNull(player);
+
+		pipeline.start();
 	}
 
 	@After

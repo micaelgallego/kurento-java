@@ -13,6 +13,7 @@ public class AsyncManager<E> {
 	protected CountDownLatch latch = new CountDownLatch(1);
 
 	protected E result;
+	protected Throwable cause;
 
 	protected String message;
 
@@ -25,7 +26,16 @@ public class AsyncManager<E> {
 		latch.countDown();
 	}
 
+	protected void addError(Throwable cause) {
+		this.cause = cause;
+		latch.countDown();
+	}
+
 	public E waitForResult() {
+
+		if (this.cause != null) {
+			throw new RuntimeException(cause);
+		}
 
 		try {
 

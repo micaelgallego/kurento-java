@@ -33,6 +33,8 @@ public class WebRtcEndpointTest extends SdpBaseTest<WebRtcEndpoint> {
 	public void setupMediaElements() {
 		sdp = WebRtcEndpoint.with(pipeline).create();
 		sdp2 = WebRtcEndpoint.with(pipeline).create();
+
+		pipeline.start();
 	}
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import org.kurento.client.AbstractBuilder;
 import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.internal.RemoteClass;
-import org.kurento.client.internal.client.RemoteObject;
+import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.jsonrpc.Props;
 
@@ -14,7 +14,7 @@ import com.google.common.reflect.TypeToken;
 @RemoteClass
 public class SampleRemoteClass extends AbstractMediaObject {
 
-	public SampleRemoteClass(RemoteObject remoteObject) {
+	public SampleRemoteClass(RemoteObjectFacade remoteObject) {
 		super(remoteObject);
 	}
 
@@ -94,6 +94,12 @@ public class SampleRemoteClass extends AbstractMediaObject {
 
 		public Builder(RomManager manager) {
 			super(SampleRemoteClass.class, manager);
+		}
+
+		@Override
+		protected SampleRemoteClass createMediaObject(
+				RemoteObjectFacade remoteObject) {
+			return new SampleRemoteClass(remoteObject);
 		}
 	}
 }

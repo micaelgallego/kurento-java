@@ -14,8 +14,8 @@
  */
 package org.kurento.client.test;
 
-import static org.kurento.client.test.RtpEndpoint2Test.URL_SMALL;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.kurento.client.test.RtpEndpoint2Test.URL_SMALL;
 
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -27,12 +27,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Assert;
 import org.junit.Test;
-import org.kurento.client.HttpGetEndpoint;
-import org.kurento.client.PlayerEndpoint;
 import org.kurento.client.EndOfStreamEvent;
 import org.kurento.client.EventListener;
+import org.kurento.client.HttpGetEndpoint;
 import org.kurento.client.MediaSessionStartedEvent;
 import org.kurento.client.MediaSessionTerminatedEvent;
+import org.kurento.client.PlayerEndpoint;
 import org.kurento.client.test.util.AsyncEventManager;
 import org.kurento.client.test.util.MediaPipelineBaseTest;
 
@@ -66,6 +66,9 @@ public class HttpGetEndpointTest extends MediaPipelineBaseTest {
 	@Test
 	public void testMethodGetUrl() {
 		HttpGetEndpoint httpEP = HttpGetEndpoint.with(pipeline).create();
+
+		pipeline.start();
+
 		Assert.assertTrue(!httpEP.getUrl().isEmpty());
 	}
 
@@ -80,7 +83,7 @@ public class HttpGetEndpointTest extends MediaPipelineBaseTest {
 	public void testEventMediaSessionStarted() throws InterruptedException,
 			ClientProtocolException, IOException {
 
-		final PlayerEndpoint player = PlayerEndpoint.with(pipeline,URL_SMALL)
+		final PlayerEndpoint player = PlayerEndpoint.with(pipeline, URL_SMALL)
 				.create();
 
 		HttpGetEndpoint httpEP = HttpGetEndpoint.with(pipeline).create();
@@ -97,6 +100,8 @@ public class HttpGetEndpointTest extends MediaPipelineBaseTest {
 				player.play();
 			}
 		});
+
+		pipeline.start();
 
 		try (CloseableHttpClient httpclient = HttpClientBuilder.create()
 				.build()) {
@@ -120,10 +125,10 @@ public class HttpGetEndpointTest extends MediaPipelineBaseTest {
 	@Test
 	public void testEventMediaSessionTerminated() throws InterruptedException,
 			ClientProtocolException, IOException {
-		final PlayerEndpoint player = PlayerEndpoint.with(pipeline,URL_SMALL)
+		final PlayerEndpoint player = PlayerEndpoint.with(pipeline, URL_SMALL)
 				.create();
-		HttpGetEndpoint httpEP = HttpGetEndpoint.with(pipeline).terminateOnEOS()
-				.create();
+		HttpGetEndpoint httpEP = HttpGetEndpoint.with(pipeline)
+				.terminateOnEOS().create();
 		player.connect(httpEP);
 
 		httpEP.addMediaSessionStartedListener(new EventListener<MediaSessionStartedEvent>() {
@@ -143,6 +148,8 @@ public class HttpGetEndpointTest extends MediaPipelineBaseTest {
 				events.add(event);
 			}
 		});
+
+		pipeline.start();
 
 		try (CloseableHttpClient httpclient = HttpClientBuilder.create()
 				.build()) {
