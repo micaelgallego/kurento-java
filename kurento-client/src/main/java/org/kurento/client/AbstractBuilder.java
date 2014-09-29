@@ -184,6 +184,10 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 		return mediaObject;
 	}
 
+	public T build() {
+		return create();
+	}
+
 	protected abstract T createMediaObject(RemoteObjectFacade remoteObject,
 			Transaction tx);
 

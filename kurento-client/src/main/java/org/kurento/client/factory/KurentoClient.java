@@ -12,10 +12,11 @@
  * Lesser General Public License for more details.
  *
  */
-package org.kurento.client;
+package org.kurento.client.factory;
 
 import javax.annotation.PreDestroy;
 
+import org.kurento.client.MediaPipeline;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient;
 import org.kurento.jsonrpc.client.JsonRpcClient;
@@ -28,6 +29,7 @@ import org.kurento.jsonrpc.client.JsonRpcClientWebSocket;
  * @author Ivan Gracia (igracia@gsyc.es)
  * @since 2.0.0
  */
+@Deprecated
 public class KurentoClient {
 
 	protected RomManager manager;
@@ -38,10 +40,6 @@ public class KurentoClient {
 
 	KurentoClient(JsonRpcClient client) {
 		this.manager = new RomManager(new RomClientJsonRpcClient(client));
-	}
-
-	public KurentoClient(RomManager manager) {
-		this.manager = manager;
 	}
 
 	public RomManager getRomManager() {
@@ -56,6 +54,12 @@ public class KurentoClient {
 	public static KurentoClient createFromJsonRpcClient(
 			JsonRpcClient jsonRpcClient) {
 		return new KurentoClient(jsonRpcClient);
+	}
+
+	@Deprecated
+	public MediaPipeline createMediaPipeline() {
+		return MediaPipeline
+				.with(new org.kurento.client.KurentoClient(manager)).create();
 	}
 
 }
