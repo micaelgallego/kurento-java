@@ -1,8 +1,10 @@
 package org.kurento.client.internal.client;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import org.kurento.client.Continuation;
+import org.kurento.client.internal.client.operation.Operation;
 import org.kurento.client.internal.transport.serialization.ObjectRefsManager;
 import org.kurento.jsonrpc.Props;
 import org.slf4j.Logger;
@@ -133,5 +135,41 @@ public class RomManager implements ObjectRefsManager {
 
 	public RomClientObjectManager getObjectManager() {
 		return manager;
+	}
+
+	public void execOperations(List<Operation> operations) {
+		log.debug("Start transaction execution");
+		// TODO Improve error handling and sort operations in smart way
+		for (Operation operation : operations) {
+			operation.exec(this);
+		}
+		log.debug("End transaction execution");
+	}
+
+	// TODO Improve this async exec. Review error handling
+	// TODO Improve error handling and sort operations in smart way
+	public void execOperations(final List<Operation> operations,
+			final Continuation<Void> continuation) {
+
+		log.debug("Start transaction async execution");
+		execOperationsRec(operations, continuation);
+	}
+
+	private void execOperationsRec(final List<Operation> operations,
+			final Continuation<Void> cont) {
+		if (operations.size() > 0) {
+			Operation op = operations.remove(0);
+
+			op.exec(this, new DefaultContinuation<Void>(cont) {
+				public void onSuccess(Void result) throws Exception {
+					if (operations.size() > 0) {
+						execOperationsRec(operations, cont);
+					} else {
+						log.debug("End transaction async execution");
+						cont.onSuccess(null);
+					}
+				}
+			});
+		}
 	}
 }

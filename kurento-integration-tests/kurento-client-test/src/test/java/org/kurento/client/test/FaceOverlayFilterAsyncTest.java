@@ -47,7 +47,7 @@ public class FaceOverlayFilterAsyncTest extends MediaPipelineAsyncBaseTest {
 		AsyncResultManager<FaceOverlayFilter> async = new AsyncResultManager<>(
 				"FaceOverlayFilter creation");
 
-		FaceOverlayFilter.with(pipeline).createAsync(async.getContinuation());
+		FaceOverlayFilter.with(pipeline).create(async.getContinuation());
 
 		overlayFilter = async.waitForResult();
 	}

@@ -3,10 +3,15 @@ package org.kurento.client.internal.client.operation;
 import java.lang.reflect.Type;
 
 import org.kurento.client.AbstractMediaObject;
+import org.kurento.client.Continuation;
+import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.RomManager;
+import org.kurento.client.internal.transport.serialization.ParamsFlattener;
 import org.kurento.jsonrpc.Props;
 
 public class InvokeOperation extends Operation {
+
+	private static ParamsFlattener FLATTENER = ParamsFlattener.getInstance();
 
 	private AbstractMediaObject object;
 	private String method;
@@ -24,8 +29,38 @@ public class InvokeOperation extends Operation {
 
 	@Override
 	public void exec(RomManager manager) {
+
+		Type flattenType = FLATTENER.calculateFlattenType(returnType);
+
+		Object result = manager.invoke(object.getRemoteObject().getObjectRef(),
+				method, params, flattenType);
+
+		if (returnType != Void.class && returnType != void.class) {
+
+			future.set(FLATTENER.unflattenValue("return", returnType, result,
+					manager));
+		}
+	}
+
+	@Override
+	public void exec(final RomManager manager, final Continuation<Void> cont) {
+
+		Type flattenType = FLATTENER.calculateFlattenType(returnType);
+
 		manager.invoke(object.getRemoteObject().getObjectRef(), method, params,
-				returnType);
+				flattenType, new DefaultContinuation<Object>(cont) {
+
+					@Override
+					public void onSuccess(Object result) throws Exception {
+						if (returnType != Void.class
+								&& returnType != void.class) {
+
+							future.set(FLATTENER.unflattenValue("return",
+									returnType, result, manager));
+						}
+						cont.onSuccess(null);
+					}
+				});
 	}
 
 }

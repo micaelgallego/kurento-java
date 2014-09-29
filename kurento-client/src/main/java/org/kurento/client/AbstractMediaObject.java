@@ -1,12 +1,15 @@
 package org.kurento.client;
 
 import java.lang.reflect.Constructor;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
 
 import org.kurento.client.internal.ParamAnnotationUtils;
 import org.kurento.client.internal.client.ListenerSubscriptionImpl;
 import org.kurento.client.internal.client.RemoteObject;
 import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
+import org.kurento.client.internal.client.operation.ReleaseOperation;
 import org.kurento.jsonrpc.Props;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +20,22 @@ public class AbstractMediaObject {
 			.getLogger(AbstractMediaObject.class);
 
 	private MediaPipeline internalMediaPipeline;
-
 	protected RemoteObjectFacade remoteObject;
+	private volatile CountDownLatch readyLatch;
+	private Continuation<Object> whenContinuation;
 
-	protected AbstractMediaObject(RemoteObjectFacade remoteObject) {
+	protected TransactionImpl tx;
+
+	private Executor executor;
+
+	protected AbstractMediaObject(RemoteObjectFacade remoteObject,
+			Transaction tx) {
 		setRemoteObject(remoteObject);
+		this.tx = (TransactionImpl) tx;
+	}
+
+	public Transaction getActiveTransaction() {
+		return tx;
 	}
 
 	public void setInternalMediaPipeline(MediaPipeline internalMediaPipeline) {
@@ -36,9 +50,71 @@ public class AbstractMediaObject {
 		return remoteObject instanceof RemoteObject;
 	}
 
-	public void setRemoteObject(RemoteObjectFacade remoteObject) {
+	public void waitReady() throws InterruptedException {
+		createReadyLatchIfNecessary();
+		readyLatch.await();
+	}
+
+	private void createReadyLatchIfNecessary() {
+		if (readyLatch == null) {
+			synchronized (this) {
+				if (readyLatch == null) {
+					readyLatch = new CountDownLatch(1);
+				}
+			}
+		}
+	}
+
+	public synchronized void whenReady(Continuation<?> continuation) {
+		whenReady(continuation, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public synchronized void whenReady(Continuation<?> continuation,
+			Executor executor) {
+		this.whenContinuation = (Continuation<Object>) continuation;
+		this.executor = executor;
+		if (isReady()) {
+			execWhenReady();
+		}
+	}
+
+	private void execWhenReady() {
+		if (executor == null) {
+			// TODO Propagate error if object is not ready for error
+			try {
+				whenContinuation.onSuccess(this);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			executor.execute(new Runnable() {
+				public void run() {
+					try {
+						whenContinuation.onSuccess(this);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+	}
+
+	public synchronized void setRemoteObject(RemoteObjectFacade remoteObject) {
 		this.remoteObject = remoteObject;
 		this.remoteObject.setPublicObject(this);
+
+		if (remoteObject instanceof RemoteObject) {
+			tx = null;
+			createReadyLatchIfNecessary();
+			readyLatch.countDown();
+			if (whenContinuation != null) {
+				// TODO Propagate error if object is not ready for error
+				execWhenReady();
+			}
+		}
 	}
 
 	protected ListenerSubscription subscribeEventListener(
@@ -57,8 +133,8 @@ public class AbstractMediaObject {
 		};
 
 		if (cont != null) {
-			remoteObject.addEventListener(eventName,
-					(Continuation<ListenerSubscriptionImpl>) cont, listener);
+			remoteObject.addEventListener(eventName, listener,
+					(Continuation<ListenerSubscriptionImpl>) cont);
 			return null;
 		} else {
 			return remoteObject.addEventListener(eventName, listener);
@@ -145,7 +221,7 @@ public class AbstractMediaObject {
 	 *
 	 **/
 	public void release() {
-		release(null);
+		release((Continuation<?>) null);
 	}
 
 	/**
@@ -169,4 +245,7 @@ public class AbstractMediaObject {
 		return null;
 	}
 
+	public void release(Transaction tx) {
+		tx.addOperation(new ReleaseOperation(this));
+	}
 }

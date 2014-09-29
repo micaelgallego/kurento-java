@@ -1,12 +1,16 @@
 package org.kurento.client.internal.test.model;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.kurento.client.AbstractBuilder;
 import org.kurento.client.AbstractMediaObject;
+import org.kurento.client.Transaction;
+import org.kurento.client.TransactionImpl;
 import org.kurento.client.internal.RemoteClass;
 import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
+import org.kurento.client.internal.client.operation.InvokeOperation;
 import org.kurento.jsonrpc.Props;
 
 import com.google.common.reflect.TypeToken;
@@ -15,15 +19,27 @@ import com.google.common.reflect.TypeToken;
 public class SampleRemoteClass extends AbstractMediaObject {
 
 	public SampleRemoteClass(RemoteObjectFacade remoteObject) {
-		super(remoteObject);
+		super(remoteObject, null);
 	}
 
 	public void methodReturnVoid() {
 		remoteObject.invoke("methodReturnVoid", null, Void.class);
 	}
 
+	public Future<Void> methodReturnVoid(Transaction t) {
+		return (Future<Void>) ((TransactionImpl) t)
+				.<Void> addOperation(new InvokeOperation(this,
+						"methodReturnVoid", null, Void.class));
+	}
+
 	public String methodReturnsString() {
 		return remoteObject.invoke("methodReturnsString", null, String.class);
+	}
+
+	public Future<String> methodReturnsString(Transaction t) {
+		return (Future<String>) ((TransactionImpl) t)
+				.<String> addOperation(new InvokeOperation(this,
+						"methodReturnsString", null, Void.class));
 	}
 
 	public boolean methodReturnsBoolean() {
@@ -98,7 +114,7 @@ public class SampleRemoteClass extends AbstractMediaObject {
 
 		@Override
 		protected SampleRemoteClass createMediaObject(
-				RemoteObjectFacade remoteObject) {
+				RemoteObjectFacade remoteObject, Transaction tx) {
 			return new SampleRemoteClass(remoteObject);
 		}
 	}

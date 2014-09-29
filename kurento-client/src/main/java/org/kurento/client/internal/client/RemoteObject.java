@@ -120,8 +120,8 @@ public class RemoteObject implements RemoteObjectFacade {
 
 	@Override
 	public void addEventListener(final String eventType,
-			final Continuation<ListenerSubscriptionImpl> cont,
-			final RemoteObjectEventListener listener) {
+			final RemoteObjectEventListener listener,
+			final Continuation<ListenerSubscriptionImpl> cont) {
 
 		manager.subscribe(objectRef, eventType,
 				new DefaultContinuation<String>(cont) {

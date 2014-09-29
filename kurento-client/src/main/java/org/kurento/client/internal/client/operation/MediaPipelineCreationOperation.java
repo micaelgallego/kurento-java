@@ -1,31 +1,37 @@
 package org.kurento.client.internal.client.operation;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.kurento.client.Continuation;
 import org.kurento.client.MediaPipeline;
+import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.RemoteObject;
+import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
 
 public class MediaPipelineCreationOperation extends Operation {
 
 	private MediaPipeline mediaPipeline;
-	private List<Operation> operations = new ArrayList<>();
 
 	public MediaPipelineCreationOperation(MediaPipeline mediaPipeline) {
 		this.mediaPipeline = mediaPipeline;
-	}
-
-	public void addOperation(Operation operation) {
-		this.operations.add(operation);
 	}
 
 	@Override
 	public void exec(RomManager manager) {
 		RemoteObject remoteObject = manager.create("MediaPipeline");
 		mediaPipeline.setRemoteObject(remoteObject);
-		for (Operation operation : operations) {
-			operation.exec(manager);
-		}
+	}
+
+	@Override
+	public void exec(final RomManager manager, final Continuation<Void> cont) {
+		manager.create("MediaPipeline",
+				new DefaultContinuation<RemoteObjectFacade>(cont) {
+					@Override
+					public void onSuccess(RemoteObjectFacade remoteObject)
+							throws Exception {
+						mediaPipeline.setRemoteObject(remoteObject);
+						cont.onSuccess(null);
+					}
+				});
+
 	}
 }

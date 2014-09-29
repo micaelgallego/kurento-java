@@ -60,7 +60,7 @@ public class PlayerEndpointAsyncTest extends MediaPipelineAsyncBaseTest {
 		AsyncResultManager<PlayerEndpoint> async = new AsyncResultManager<>(
 				"PlayerEndpoint creation");
 
-		PlayerEndpoint.with(pipeline, URL_SMALL).createAsync(
+		PlayerEndpoint.with(pipeline, URL_SMALL).create(
 				async.getContinuation());
 
 		player = async.waitForResult();

@@ -7,6 +7,7 @@ package org.kurento.client;
 
 import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.NonReadyRemoteObject;
+import org.kurento.client.internal.client.NonReadyRemoteObject.NonReadyMode;
 import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.client.operation.MediaObjectCreationOperation;
@@ -49,10 +50,25 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 	 *
 	 **/
 	public T create() {
-		return create(null);
+		return internalCreate(null);
 	}
 
-	public T create(final Continuation<T> continuation) {
+	/**
+	 * Builds an object asynchronously using the builder design pattern.
+	 *
+	 * The continuation will have {@link Continuation#onSuccess} called when the
+	 * object is ready, or {@link Continuation#onError} if an error occurs
+	 *
+	 * @param continuation
+	 *            will be called when the object is built
+	 *
+	 *
+	 **/
+	public void create(final Continuation<T> continuation) {
+		internalCreate(continuation);
+	}
+
+	private T internalCreate(final Continuation<T> continuation) {
 
 		final AbstractMediaObject constObject = obtainConstructorObject();
 
@@ -64,7 +80,7 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 			public void onSuccess(RemoteObjectFacade remoteObject) {
 				try {
 					T newMediaObject = createMediaObjectConst(constObject,
-							remoteObject);
+							remoteObject, null);
 					continuation.onSuccess(newMediaObject);
 				} catch (Exception e) {
 					log.warn(
@@ -85,7 +101,8 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 				RemoteObjectFacade remoteObject = manager.create(
 						clazz.getSimpleName(), props);
 
-				mediaObject = createMediaObjectConst(constObject, remoteObject);
+				mediaObject = createMediaObjectConst(constObject, remoteObject,
+						null);
 
 			} else {
 
@@ -100,9 +117,10 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 			MediaPipeline pipeline = constObject.getInternalMediaPipeline();
 
 			NonReadyRemoteObject remoteObject = new NonReadyRemoteObject(
-					pipeline);
+					pipeline, NonReadyMode.CREATION);
 
-			mediaObject = createMediaObjectConst(constObject, remoteObject);
+			mediaObject = createMediaObjectConst(constObject, remoteObject,
+					pipeline.getActiveTransaction());
 
 			if (continuation != null) {
 				try {
@@ -123,9 +141,9 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 
 	@SuppressWarnings("unchecked")
 	private T createMediaObjectConst(AbstractMediaObject constObject,
-			RemoteObjectFacade remoteObject) {
+			RemoteObjectFacade remoteObject, Transaction tx) {
 
-		AbstractMediaObject mediaObject = createMediaObject(remoteObject);
+		AbstractMediaObject mediaObject = createMediaObject(remoteObject, tx);
 
 		if (constObject != null) {
 			mediaObject.setInternalMediaPipeline(constObject
@@ -147,21 +165,26 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 		return rootObject;
 	}
 
-	protected abstract T createMediaObject(RemoteObjectFacade remoteObject);
+	public T create(Transaction tx) {
 
-	/**
-	 * Builds an object asynchronously using the builder design pattern.
-	 *
-	 * The continuation will have {@link Continuation#onSuccess} called when the
-	 * object is ready, or {@link Continuation#onError} if an error occurs
-	 *
-	 * @param continuation
-	 *            will be called when the object is built
-	 *
-	 *
-	 **/
-	public void createAsync(final Continuation<T> continuation) {
-		create(continuation);
+		final AbstractMediaObject constObject = obtainConstructorObject();
+
+		MediaPipeline pipeline = constObject.getInternalMediaPipeline();
+
+		NonReadyRemoteObject remoteObject = new NonReadyRemoteObject(pipeline,
+				NonReadyMode.TRANSACTION);
+
+		T mediaObject = createMediaObjectConst(constObject, remoteObject, tx);
+
+		MediaObjectCreationOperation op = new MediaObjectCreationOperation(
+				clazz.getSimpleName(), props, mediaObject);
+
+		tx.addOperation(op);
+
+		return mediaObject;
 	}
+
+	protected abstract T createMediaObject(RemoteObjectFacade remoteObject,
+			Transaction tx);
 
 }

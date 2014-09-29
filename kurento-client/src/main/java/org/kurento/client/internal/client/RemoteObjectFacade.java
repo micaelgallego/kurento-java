@@ -28,8 +28,8 @@ public interface RemoteObjectFacade {
 			RemoteObjectEventListener listener);
 
 	public abstract void addEventListener(String eventType,
-			Continuation<ListenerSubscriptionImpl> cont,
-			RemoteObjectEventListener listener);
+			RemoteObjectEventListener listener,
+			Continuation<ListenerSubscriptionImpl> cont);
 
 	public abstract String getObjectRef();
 

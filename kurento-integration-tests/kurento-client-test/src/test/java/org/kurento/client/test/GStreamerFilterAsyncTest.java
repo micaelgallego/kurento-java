@@ -63,7 +63,7 @@ public class GStreamerFilterAsyncTest extends MediaPipelineAsyncBaseTest {
 				"GStreamerFilter creation");
 
 		GStreamerFilter.with(pipeline, "videoflip method=horizontal-flip")
-				.createAsync(async.getContinuation());
+				.create(async.getContinuation());
 
 		filter = async.waitForResult();
 

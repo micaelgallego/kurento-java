@@ -2,13 +2,14 @@ package org.kurento.client.internal.test.model;
 
 import org.kurento.client.AbstractBuilder;
 import org.kurento.client.AbstractMediaObject;
+import org.kurento.client.Transaction;
 import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
 
 public class Sample2 extends AbstractMediaObject {
 
 	public Sample2(RemoteObjectFacade remoteObject) {
-		super(remoteObject);
+		super(remoteObject, null);
 	}
 
 	public String getAtt1() {
@@ -51,7 +52,8 @@ public class Sample2 extends AbstractMediaObject {
 		}
 
 		@Override
-		protected Sample2 createMediaObject(RemoteObjectFacade remoteObject) {
+		protected Sample2 createMediaObject(RemoteObjectFacade remoteObject,
+				Transaction tx) {
 			return new Sample2(remoteObject);
 		}
 	}

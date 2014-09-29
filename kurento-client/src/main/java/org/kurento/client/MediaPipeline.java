@@ -22,19 +22,22 @@ import org.kurento.client.internal.client.operation.Operation;
 @RemoteClass
 public class MediaPipeline extends MediaObject {
 
-	private MediaPipelineCreationOperation pipelineCreationOp = new MediaPipelineCreationOperation(
-			this);
 	private RomManager manager;
 
-	public MediaPipeline(RemoteObjectFacade remoteObject) {
-		super(remoteObject);
+	public MediaPipeline(RemoteObjectFacade remoteObject, RomManager manager) {
+		super(remoteObject, new TransactionImpl(manager));
 		this.setInternalMediaPipeline(this);
+		this.tx.addOperation(new MediaPipelineCreationOperation(this));
+		((NonReadyRemoteObject) remoteObject).setPublicObject(this);
+		this.manager = manager;
+	}
+
+	public MediaPipeline(RemoteObjectFacade remoteObject) {
+		this(remoteObject, null);
 	}
 
 	public MediaPipeline(RomManager manager) {
-		this(new NonReadyRemoteObject());
-		((NonReadyRemoteObject) remoteObject).setPublicObject(this);
-		this.manager = manager;
+		this(new NonReadyRemoteObject(), manager);
 	}
 
 	public static Builder with(KurentoClient client) {
@@ -45,11 +48,32 @@ public class MediaPipeline extends MediaObject {
 		if (isReady()) {
 			throw new IllegalStateException("MediaPipeline is yet started");
 		}
-		pipelineCreationOp.exec(manager);
+		tx.exec();
+	}
+
+	public void start(final Continuation<MediaPipeline> continuation) {
+		if (isReady()) {
+			throw new IllegalStateException("MediaPipeline is yet started");
+		}
+		tx.exec(new Continuation<Void>() {
+			@Override
+			public void onSuccess(Void result) throws Exception {
+				continuation.onSuccess(MediaPipeline.this);
+			}
+
+			@Override
+			public void onError(Throwable cause) throws Exception {
+				continuation.onError(cause);
+			}
+		});
 	}
 
 	public void addOperation(Operation operation) {
-		pipelineCreationOp.addOperation(operation);
+		tx.addOperation(operation);
+	}
+
+	public Transaction getCreationTransaction() {
+		return tx;
 	}
 
 	public static class Builder {
@@ -71,6 +95,10 @@ public class MediaPipeline extends MediaObject {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public Transaction newTransaction() {
+		return new TransactionImpl(manager);
 	}
 
 }
