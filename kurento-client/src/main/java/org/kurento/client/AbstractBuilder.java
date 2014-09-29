@@ -184,6 +184,7 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 		return mediaObject;
 	}
 
+	@Deprecated
 	public T build() {
 		return create();
 	}
