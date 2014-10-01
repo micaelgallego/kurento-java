@@ -58,8 +58,10 @@ public class KurentoClient {
 
 	@Deprecated
 	public MediaPipeline createMediaPipeline() {
-		return MediaPipeline
-				.with(new org.kurento.client.KurentoClient(manager)).create();
+		MediaPipeline pipeline = MediaPipeline.with(
+				new org.kurento.client.KurentoClient(manager)).create();
+		pipeline.start();
+		return pipeline;
 	}
 
 }

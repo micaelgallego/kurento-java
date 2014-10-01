@@ -246,6 +246,6 @@ public class AbstractMediaObject {
 	}
 
 	public void release(Transaction tx) {
-		tx.addOperation(new ReleaseOperation(this));
+		((TransactionImpl) tx).addOperation(new ReleaseOperation(this));
 	}
 }

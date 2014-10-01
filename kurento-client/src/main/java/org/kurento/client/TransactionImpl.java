@@ -11,6 +11,7 @@ public class TransactionImpl implements Transaction {
 
 	private List<Operation> operations = new ArrayList<>();
 	private RomManager manager;
+	private int objectRef = 0;
 
 	public TransactionImpl(RomManager manager) {
 		this.manager = manager;
@@ -28,5 +29,9 @@ public class TransactionImpl implements Transaction {
 
 	public void exec(Continuation<Void> continuation) {
 		manager.execOperations(operations, continuation);
+	}
+
+	public String nextObjectRef() {
+		return "newref:" + (objectRef++);
 	}
 }

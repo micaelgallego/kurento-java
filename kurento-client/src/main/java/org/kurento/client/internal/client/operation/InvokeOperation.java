@@ -6,6 +6,8 @@ import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.Continuation;
 import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.RomManager;
+import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient;
+import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient.RequestAndResponseType;
 import org.kurento.client.internal.transport.serialization.ParamsFlattener;
 import org.kurento.jsonrpc.Props;
 
@@ -63,4 +65,23 @@ public class InvokeOperation extends Operation {
 				});
 	}
 
+	@Override
+	public RequestAndResponseType createRequest(
+			RomClientJsonRpcClient romClientJsonRpcClient) {
+
+		Type flattenType = FLATTENER.calculateFlattenType(returnType);
+
+		return romClientJsonRpcClient.createInvokeRequest(object
+				.getRemoteObject().getObjectRef(), method, params, flattenType);
+	}
+
+	@Override
+	public void processResponse(Object result) {
+
+		if (returnType != Void.class && returnType != void.class) {
+
+			future.set(FLATTENER.unflattenValue("return", returnType, result,
+					manager));
+		}
+	}
 }

@@ -6,6 +6,8 @@ import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.RemoteObject;
 import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
+import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient;
+import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient.RequestAndResponseType;
 import org.kurento.jsonrpc.Props;
 
 public class MediaObjectCreationOperation extends Operation {
@@ -24,7 +26,6 @@ public class MediaObjectCreationOperation extends Operation {
 	public void exec(RomManager manager) {
 		RemoteObject remoteObject = manager
 				.create(className, constructorParams);
-
 		mediaObject.setRemoteObject(remoteObject);
 	}
 
@@ -39,6 +40,19 @@ public class MediaObjectCreationOperation extends Operation {
 						cont.onSuccess(null);
 					}
 				});
+	}
 
+	@Override
+	public RequestAndResponseType createRequest(
+			RomClientJsonRpcClient romClientJsonRpcClient) {
+		return romClientJsonRpcClient.createCreateRequest(className,
+				constructorParams);
+	}
+
+	@Override
+	public void processResponse(Object response) {
+		RemoteObject remoteObject = new RemoteObject((String) response,
+				className, manager);
+		mediaObject.setRemoteObject(remoteObject);
 	}
 }

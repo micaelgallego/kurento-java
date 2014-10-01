@@ -31,6 +31,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.kurento.jsonrpc.internal.JsonRpcConstants;
+import org.kurento.jsonrpc.message.Message;
+import org.kurento.jsonrpc.message.Request;
+import org.kurento.jsonrpc.message.Response;
+import org.kurento.jsonrpc.message.ResponseError;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -46,16 +52,10 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.$Gson$Types;
 
-import org.kurento.jsonrpc.internal.JsonRpcConstants;
-import org.kurento.jsonrpc.message.Message;
-import org.kurento.jsonrpc.message.Request;
-import org.kurento.jsonrpc.message.Response;
-import org.kurento.jsonrpc.message.ResponseError;
-
 /**
- * 
+ *
  * Gson/JSON utilities; used to serialise Java object to JSON (as String).
- * 
+ *
  * @author Miguel París (mparisdiaz@gsyc.es)
  * @since 1.0.0
  */
@@ -69,7 +69,7 @@ public class JsonUtils {
 
 	/**
 	 * Serialise Java object to JSON (as String).
-	 * 
+	 *
 	 * @param obj
 	 *            Java Object representing a JSON message to be serialized
 	 * @return Serialised JSON message (as String)
@@ -113,8 +113,8 @@ public class JsonUtils {
 							Response.class, resultClass));
 
 		} catch (JsonSyntaxException e) {
-			throw new JsonRpcException("Exception converting Json '"
-					+ json + "' to a JSON-RPC response with params as class "
+			throw new JsonRpcException("Exception converting Json '" + json
+					+ "' to a JSON-RPC response with params as class "
 					+ resultClass.getName(), e);
 		}
 	}
@@ -252,24 +252,30 @@ public class JsonUtils {
 
 	/**
 	 * Gson object accessor (getter).
-	 * 
+	 *
 	 * @return son object
 	 */
 	public static Gson getGson() {
-		if (gson != null) {
-			return gson;
+
+		if (gson == null) {
+			synchronized (JsonUtils.class) {
+				if (gson == null) {
+					GsonBuilder builder = new GsonBuilder();
+					builder.registerTypeAdapter(Request.class,
+							new JsonRpcRequestDeserializer());
+
+					builder.registerTypeAdapter(Response.class,
+							new JsonRpcResponseDeserializer());
+
+					builder.registerTypeAdapter(Props.class,
+							new JsonPropsAdapter());
+
+					builder.disableHtmlEscaping();
+
+					gson = builder.create();
+				}
+			}
 		}
-
-		GsonBuilder builder = new GsonBuilder();
-		builder.registerTypeAdapter(Request.class,
-				new JsonRpcRequestDeserializer());
-
-		builder.registerTypeAdapter(Response.class,
-				new JsonRpcResponseDeserializer());
-
-		builder.registerTypeAdapter(Props.class, new JsonPropsAdapter());
-
-		gson = builder.create();
 
 		return gson;
 	}
@@ -402,9 +408,8 @@ class JsonRpcResponseDeserializer implements JsonDeserializer<Response<?>> {
 					jObject.get(ERROR_PROPERTY), ResponseError.class));
 
 		} else {
-			throw new JsonParseException("Invalid JsonRpc response lacking '"
-					+ RESULT_PROPERTY + "' and '" + ERROR_PROPERTY
-					+ "' fields. " + json);
+
+			return new Response<>(id);
 		}
 
 	}
@@ -495,8 +500,7 @@ class JsonPropsAdapter implements JsonDeserializer<Props>,
 			return result;
 
 		} else {
-			throw new JsonRpcException("Unrecognized Json element: "
-					+ value);
+			throw new JsonRpcException("Unrecognized Json element: " + value);
 		}
 	}
 

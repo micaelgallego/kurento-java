@@ -17,6 +17,8 @@ public class RomManager implements ObjectRefsManager {
 	private final RomClientObjectManager manager;
 	private final RomClient client;
 
+	private static final boolean SERVER_TRANSACTION_SUPPORT = true;
+
 	public RomManager(RomClient client) {
 		this.client = client;
 		this.manager = new RomClientObjectManager(this);
@@ -138,21 +140,34 @@ public class RomManager implements ObjectRefsManager {
 	}
 
 	public void execOperations(List<Operation> operations) {
-		log.debug("Start transaction execution");
-		// TODO Improve error handling and sort operations in smart way
-		for (Operation operation : operations) {
-			operation.exec(this);
+		for (Operation op : operations) {
+			op.setManager(this);
 		}
-		log.debug("End transaction execution");
+		if (SERVER_TRANSACTION_SUPPORT) {
+			client.transaction(operations);
+		} else {
+			log.debug("Start transaction execution");
+			// TODO Improve error handling and sort operations in smart way
+			for (Operation operation : operations) {
+				operation.exec(this);
+			}
+			log.debug("End transaction execution");
+		}
 	}
 
 	// TODO Improve this async exec. Review error handling
 	// TODO Improve error handling and sort operations in smart way
 	public void execOperations(final List<Operation> operations,
 			final Continuation<Void> continuation) {
-
-		log.debug("Start transaction async execution");
-		execOperationsRec(operations, continuation);
+		for (Operation op : operations) {
+			op.setManager(this);
+		}
+		if (SERVER_TRANSACTION_SUPPORT) {
+			client.transaction(operations, continuation);
+		} else {
+			log.debug("Start transaction async execution");
+			execOperationsRec(operations, continuation);
+		}
 	}
 
 	private void execOperationsRec(final List<Operation> operations,

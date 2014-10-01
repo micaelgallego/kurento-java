@@ -1,10 +1,13 @@
 package org.kurento.client.internal.client;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.Continuation;
+import org.kurento.client.TransactionNotExecutedException;
 import org.kurento.client.internal.transport.serialization.ParamsFlattener;
+import org.kurento.jsonrpc.Prop;
 import org.kurento.jsonrpc.Props;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,9 +71,37 @@ public class RemoteObject implements RemoteObjectFacade {
 
 		Type flattenType = FLATTENER.calculateFlattenType(type);
 
+		checkForNonReadyObjects(params);
+
 		Object obj = manager.invoke(objectRef, method, params, flattenType);
 
 		return FLATTENER.unflattenValue("return", type, obj, manager);
+	}
+
+	// TODO Can we optimize this without processing always all invoke params?
+	private void checkForNonReadyObjects(Props params) {
+		if (params != null) {
+			for (Prop prop : params) {
+				checkParam(prop.getValue());
+			}
+		}
+	}
+
+	private void checkParam(Object param) {
+		if (param instanceof AbstractMediaObject) {
+			checkMediaObject((AbstractMediaObject) param);
+		} else if (param instanceof List) {
+			for (Object elem : ((List<?>) param)) {
+				checkParam(elem);
+			}
+		}
+	}
+
+	private void checkMediaObject(AbstractMediaObject mediaObject) {
+		RemoteObjectFacade ro = mediaObject.getRemoteObject();
+		if (ro instanceof NonReadyRemoteObject) {
+			throw new TransactionNotExecutedException();
+		}
 	}
 
 	@Override
@@ -113,9 +144,13 @@ public class RemoteObject implements RemoteObjectFacade {
 
 		String subscription = manager.subscribe(objectRef, eventType);
 
-		listeners.put(eventType, listener);
+		addListener(eventType, listener);
 
 		return new ListenerSubscriptionImpl(subscription, eventType, listener);
+	}
+
+	public void addListener(String eventType, RemoteObjectEventListener listener) {
+		listeners.put(eventType, listener);
 	}
 
 	@Override
@@ -127,7 +162,7 @@ public class RemoteObject implements RemoteObjectFacade {
 				new DefaultContinuation<String>(cont) {
 					@Override
 					public void onSuccess(String subscription) {
-						listeners.put(eventType, listener);
+						addListener(eventType, listener);
 						try {
 							cont.onSuccess(new ListenerSubscriptionImpl(
 									subscription, eventType, listener));

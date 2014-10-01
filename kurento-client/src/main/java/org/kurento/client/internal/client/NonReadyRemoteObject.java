@@ -26,14 +26,17 @@ public class NonReadyRemoteObject implements RemoteObjectFacade {
 
 	private AbstractMediaObject mediaObject;
 	private NonReadyMode nonReadyMode;
+	private String objectRef;
 
-	public NonReadyRemoteObject(AbstractMediaObject mediaObject,
-			NonReadyMode nonReadyMode) {
+	public NonReadyRemoteObject(String objectId,
+			AbstractMediaObject mediaObject, NonReadyMode nonReadyMode) {
+		this.objectRef = objectId;
 		this.mediaObject = mediaObject;
 		this.nonReadyMode = nonReadyMode;
 	}
 
 	public NonReadyRemoteObject() {
+		this.objectRef = "XX";
 		this.nonReadyMode = NonReadyMode.CREATION;
 	}
 
@@ -147,6 +150,9 @@ public class NonReadyRemoteObject implements RemoteObjectFacade {
 		return op.getListenerSubscription();
 	}
 
+	// TODO Review if this implementation is correct. I think we should allow
+	// event registering in async mode when non ready, but this implementation
+	// doesn't allow it
 	@Override
 	public void addEventListener(String eventType,
 			RemoteObjectEventListener listener,
@@ -160,8 +166,7 @@ public class NonReadyRemoteObject implements RemoteObjectFacade {
 
 	@Override
 	public String getObjectRef() {
-		throwException();
-		return null;
+		return objectRef;
 	}
 
 	@Override
@@ -196,4 +201,5 @@ public class NonReadyRemoteObject implements RemoteObjectFacade {
 		}
 		return new MediaPipelineNotStartedException();
 	}
+
 }

@@ -116,8 +116,11 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 
 			MediaPipeline pipeline = constObject.getInternalMediaPipeline();
 
+			TransactionImpl tx = (TransactionImpl) pipeline
+					.getActiveTransaction();
+
 			NonReadyRemoteObject remoteObject = new NonReadyRemoteObject(
-					pipeline, NonReadyMode.CREATION);
+					tx.nextObjectRef(), pipeline, NonReadyMode.CREATION);
 
 			mediaObject = createMediaObjectConst(constObject, remoteObject,
 					pipeline.getActiveTransaction());
@@ -165,14 +168,16 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 		return rootObject;
 	}
 
-	public T create(Transaction tx) {
+	public T create(Transaction transaction) {
+
+		TransactionImpl tx = (TransactionImpl) transaction;
 
 		final AbstractMediaObject constObject = obtainConstructorObject();
 
 		MediaPipeline pipeline = constObject.getInternalMediaPipeline();
 
-		NonReadyRemoteObject remoteObject = new NonReadyRemoteObject(pipeline,
-				NonReadyMode.TRANSACTION);
+		NonReadyRemoteObject remoteObject = new NonReadyRemoteObject(
+				tx.nextObjectRef(), pipeline, NonReadyMode.TRANSACTION);
 
 		T mediaObject = createMediaObjectConst(constObject, remoteObject, tx);
 

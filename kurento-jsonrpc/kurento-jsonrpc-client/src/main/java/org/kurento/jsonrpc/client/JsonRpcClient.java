@@ -17,9 +17,6 @@ package org.kurento.jsonrpc.client;
 import java.io.Closeable;
 import java.io.IOException;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
 import org.kurento.jsonrpc.JsonRpcHandler;
 import org.kurento.jsonrpc.KeepAliveManager;
 import org.kurento.jsonrpc.Session;
@@ -29,6 +26,9 @@ import org.kurento.jsonrpc.internal.JsonRpcRequestSenderHelper;
 import org.kurento.jsonrpc.internal.client.ClientSession;
 import org.kurento.jsonrpc.message.Request;
 import org.kurento.jsonrpc.message.Response;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * This class is used to make request to a server using the JSON-RPC protocol

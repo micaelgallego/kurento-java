@@ -7,7 +7,7 @@ package org.kurento.client;
 
 import org.kurento.client.internal.RemoteClass;
 import org.kurento.client.internal.client.NonReadyRemoteObject;
-import org.kurento.client.internal.client.RemoteObjectFacade;
+import org.kurento.client.internal.client.NonReadyRemoteObject.NonReadyMode;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.client.operation.MediaPipelineCreationOperation;
 import org.kurento.client.internal.client.operation.Operation;
@@ -24,20 +24,17 @@ public class MediaPipeline extends MediaObject {
 
 	private RomManager manager;
 
-	public MediaPipeline(RemoteObjectFacade remoteObject, RomManager manager) {
-		super(remoteObject, new TransactionImpl(manager));
+	public MediaPipeline(RomManager manager) {
+		this(manager, new TransactionImpl(manager));
+	}
+
+	private MediaPipeline(RomManager manager, TransactionImpl tx) {
+		super(new NonReadyRemoteObject(tx.nextObjectRef(), null,
+				NonReadyMode.CREATION), tx);
 		this.setInternalMediaPipeline(this);
 		this.tx.addOperation(new MediaPipelineCreationOperation(this));
 		((NonReadyRemoteObject) remoteObject).setPublicObject(this);
 		this.manager = manager;
-	}
-
-	public MediaPipeline(RemoteObjectFacade remoteObject) {
-		this(remoteObject, null);
-	}
-
-	public MediaPipeline(RomManager manager) {
-		this(new NonReadyRemoteObject(), manager);
 	}
 
 	public static Builder with(KurentoClient client) {
