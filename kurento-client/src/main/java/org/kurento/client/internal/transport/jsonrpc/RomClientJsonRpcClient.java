@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kurento.client.Continuation;
+import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.RomClient;
 import org.kurento.client.internal.client.RomEventHandler;
 import org.kurento.client.internal.client.operation.Operation;
@@ -323,14 +324,21 @@ public class RomClientJsonRpcClient implements RomClient {
 	}
 
 	@Override
-	@SuppressWarnings("serial")
 	public void transaction(List<Operation> operations) {
+		transaction(operations, null);
+	}
+
+	@Override
+	@SuppressWarnings("serial")
+	public void transaction(final List<Operation> operations,
+			final Continuation<Void> continuation) {
+
 		// TODO Now this implementation consider Server side support for
 		// transactions. Refactor other code to include here the logic to behave
 		// different when the server doesn't have transaction support
 
 		JsonArray opJsons = new JsonArray();
-		List<RequestAndResponseType> opReqres = new ArrayList<>();
+		final List<RequestAndResponseType> opReqres = new ArrayList<>();
 
 		for (Operation op : operations) {
 			RequestAndResponseType reqres = op.createRequest(this);
@@ -341,11 +349,33 @@ public class RomClientJsonRpcClient implements RomClient {
 		JsonObject params = new JsonObject();
 		params.add(TRANSACTION_OPERATIONS, opJsons);
 
+		DefaultContinuation<List<Response<JsonElement>>> wrappedContinuation = null;
+
+		if (continuation != null) {
+			wrappedContinuation = new DefaultContinuation<List<Response<JsonElement>>>(
+					continuation) {
+				@Override
+				public void onSuccess(List<Response<JsonElement>> responses)
+						throws Exception {
+					processTransactionResponse(operations, opReqres, responses);
+					continuation.onSuccess(null);
+				}
+			};
+		}
+
 		List<Response<JsonElement>> responses = this.sendRequest(
 				new Request<JsonObject>(TRANSACTION_METHOD, params),
 				new TypeToken<List<Response<JsonElement>>>() {
-				}.getType(), null, null);
+				}.getType(), null, wrappedContinuation);
 
+		if (continuation == null) {
+			processTransactionResponse(operations, opReqres, responses);
+		}
+	}
+
+	private void processTransactionResponse(List<Operation> operations,
+			List<RequestAndResponseType> opReqres,
+			List<Response<JsonElement>> responses) {
 		for (int i = 0; i < operations.size(); i++) {
 			Operation op = operations.get(i);
 			Response<JsonElement> response = responses.get(i);
@@ -360,13 +390,6 @@ public class RomClientJsonRpcClient implements RomClient {
 						response.getResult()));
 			}
 		}
-	}
-
-	@Override
-	public void transaction(List<Operation> operations,
-			Continuation<Void> continuation) {
-		// TODO Implement this
-		throw new Error("Not yet implemented");
 	}
 
 }
