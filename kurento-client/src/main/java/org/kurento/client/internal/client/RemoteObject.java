@@ -94,12 +94,15 @@ public class RemoteObject implements RemoteObjectFacade {
 			for (Object elem : ((List<?>) param)) {
 				checkParam(elem);
 			}
+		} else if (param instanceof Props) {
+			for (Prop prop : ((Props) param)) {
+				checkParam(prop.getValue());
+			}
 		}
 	}
 
 	private void checkMediaObject(AbstractMediaObject mediaObject) {
-		RemoteObjectFacade ro = mediaObject.getRemoteObject();
-		if (ro instanceof NonReadyRemoteObject) {
+		if (!mediaObject.isReady()) {
 			throw new TransactionNotExecutedException();
 		}
 	}
