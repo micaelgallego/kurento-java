@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.kurento.client.AbstractMediaObject;
+import org.kurento.client.InternalInfoGetter;
 import org.kurento.client.internal.ParamAnnotationUtils;
 import org.kurento.client.internal.RemoteClass;
 import org.kurento.client.internal.client.RemoteObject;
@@ -66,7 +67,7 @@ public class ParamsFlattener {
 	/**
 	 * Flatten the parameter list to be sent to remote server using flattenParam
 	 * method
-	 * 
+	 *
 	 * @param params
 	 * @return Properties holding flattened params
 	 */
@@ -82,7 +83,7 @@ public class ParamsFlattener {
 	/**
 	 * Flatten the parameter list to be sent to remote server using flattenParam
 	 * method
-	 * 
+	 *
 	 * @param params
 	 * @return
 	 */
@@ -106,7 +107,7 @@ public class ParamsFlattener {
 	 * Props object has an entry for each property with its name and value. The
 	 * value of the property is also flatten.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param param
 	 * @return
 	 */
@@ -119,8 +120,8 @@ public class ParamsFlattener {
 		Object processedParam;
 		if (param instanceof AbstractMediaObject) {
 
-			processedParam = ((AbstractMediaObject) param).getRemoteObject()
-					.getObjectRef();
+			processedParam = InternalInfoGetter.getRemoteObject(
+					(AbstractMediaObject) param).getObjectRef();
 
 			// } else if (param instanceof Proxy) {
 			//
@@ -224,7 +225,7 @@ public class ParamsFlattener {
 
 	/**
 	 * Extract the bean properties of this param as Props object.
-	 * 
+	 *
 	 * @param param
 	 * @return
 	 */

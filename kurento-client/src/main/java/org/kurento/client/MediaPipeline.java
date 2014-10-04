@@ -6,6 +6,7 @@
 package org.kurento.client;
 
 import org.kurento.client.internal.RemoteClass;
+import org.kurento.client.internal.TransactionImpl;
 import org.kurento.client.internal.client.NonReadyRemoteObject;
 import org.kurento.client.internal.client.NonReadyRemoteObject.NonReadyMode;
 import org.kurento.client.internal.client.RomManager;
@@ -65,7 +66,7 @@ public class MediaPipeline extends MediaObject {
 		});
 	}
 
-	public void addOperation(Operation operation) {
+	void addOperation(Operation operation) {
 		tx.addOperation(operation);
 	}
 

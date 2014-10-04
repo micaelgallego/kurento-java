@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 
 import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.Continuation;
+import org.kurento.client.InternalInfoGetter;
 import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient;
@@ -34,7 +35,8 @@ public class InvokeOperation extends Operation {
 
 		Type flattenType = FLATTENER.calculateFlattenType(returnType);
 
-		Object result = manager.invoke(object.getRemoteObject().getObjectRef(),
+		Object result = manager.invoke(
+				InternalInfoGetter.getRemoteObject(object).getObjectRef(),
 				method, params, flattenType);
 
 		if (returnType != Void.class && returnType != void.class) {
@@ -49,8 +51,9 @@ public class InvokeOperation extends Operation {
 
 		Type flattenType = FLATTENER.calculateFlattenType(returnType);
 
-		manager.invoke(object.getRemoteObject().getObjectRef(), method, params,
-				flattenType, new DefaultContinuation<Object>(cont) {
+		manager.invoke(InternalInfoGetter.getRemoteObject(object)
+				.getObjectRef(), method, params, flattenType,
+				new DefaultContinuation<Object>(cont) {
 
 					@Override
 					public void onSuccess(Object result) throws Exception {
@@ -71,8 +74,9 @@ public class InvokeOperation extends Operation {
 
 		Type flattenType = FLATTENER.calculateFlattenType(returnType);
 
-		return romClientJsonRpcClient.createInvokeRequest(object
-				.getRemoteObject().getObjectRef(), method, params, flattenType);
+		return romClientJsonRpcClient.createInvokeRequest(InternalInfoGetter
+				.getRemoteObject(object).getObjectRef(), method, params,
+				flattenType);
 	}
 
 	@Override

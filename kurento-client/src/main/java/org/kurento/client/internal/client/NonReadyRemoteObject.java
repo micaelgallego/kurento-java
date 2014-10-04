@@ -1,5 +1,8 @@
 package org.kurento.client.internal.client;
 
+import static org.kurento.client.InternalInfoGetter.addOperation;
+import static org.kurento.client.InternalInfoGetter.getInternalMediaPipeline;
+
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -63,11 +66,10 @@ public class NonReadyRemoteObject implements RemoteObjectFacade {
 		case CREATION:
 			if (NON_READY_VALID_METHODS.contains(method)) {
 
-				mediaObject.getInternalMediaPipeline()
-						.addOperation(
-								new InvokeOperation((AbstractMediaObject) this
-										.getPublicObject(), method, params,
-										returnType));
+				addOperation(
+						getInternalMediaPipeline(mediaObject),
+						new InvokeOperation((AbstractMediaObject) this
+								.getPublicObject(), method, params, returnType));
 
 				// TODO Only non-return value methods are allowed
 				return null;
@@ -91,7 +93,8 @@ public class NonReadyRemoteObject implements RemoteObjectFacade {
 		case CREATION:
 			if (NON_READY_VALID_METHODS.contains(method)) {
 
-				mediaObject.getInternalMediaPipeline().addOperation(
+				addOperation(
+						getInternalMediaPipeline(mediaObject),
 						new InvokeOperation((AbstractMediaObject) this
 								.getPublicObject(), method, params, type));
 
@@ -145,7 +148,7 @@ public class NonReadyRemoteObject implements RemoteObjectFacade {
 				(AbstractMediaObject) this.getPublicObject(), eventType,
 				listener);
 
-		mediaObject.getInternalMediaPipeline().addOperation(op);
+		addOperation(getInternalMediaPipeline(mediaObject), op);
 
 		return op.getListenerSubscription();
 	}

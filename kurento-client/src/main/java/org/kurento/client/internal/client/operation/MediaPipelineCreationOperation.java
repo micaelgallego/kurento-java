@@ -1,6 +1,7 @@
 package org.kurento.client.internal.client.operation;
 
 import org.kurento.client.Continuation;
+import org.kurento.client.InternalInfoGetter;
 import org.kurento.client.MediaPipeline;
 import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.RemoteObject;
@@ -21,7 +22,7 @@ public class MediaPipelineCreationOperation extends Operation {
 	@Override
 	public void exec(RomManager manager) {
 		RemoteObject remoteObject = manager.create(MEDIA_PIPELINE_CLASSNAME);
-		mediaPipeline.setRemoteObject(remoteObject);
+		InternalInfoGetter.setRemoteObject(mediaPipeline, remoteObject);
 	}
 
 	@Override
@@ -31,7 +32,8 @@ public class MediaPipelineCreationOperation extends Operation {
 					@Override
 					public void onSuccess(RemoteObjectFacade remoteObject)
 							throws Exception {
-						mediaPipeline.setRemoteObject(remoteObject);
+						InternalInfoGetter.setRemoteObject(mediaPipeline,
+								remoteObject);
 						cont.onSuccess(null);
 					}
 				});
@@ -42,14 +44,14 @@ public class MediaPipelineCreationOperation extends Operation {
 	public RequestAndResponseType createRequest(
 			RomClientJsonRpcClient romClientJsonRpcClient) {
 
-		return romClientJsonRpcClient
-				.createCreateRequest(MEDIA_PIPELINE_CLASSNAME, null);
+		return romClientJsonRpcClient.createCreateRequest(
+				MEDIA_PIPELINE_CLASSNAME, null);
 	}
 
 	@Override
 	public void processResponse(Object response) {
 		RemoteObject remoteObject = new RemoteObject((String) response,
 				MEDIA_PIPELINE_CLASSNAME, manager);
-		mediaPipeline.setRemoteObject(remoteObject);
+		InternalInfoGetter.setRemoteObject(mediaPipeline, remoteObject);
 	}
 }

@@ -1,9 +1,11 @@
-package org.kurento.client;
+package org.kurento.client.internal;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import org.kurento.client.Continuation;
+import org.kurento.client.Transaction;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.client.operation.Operation;
 

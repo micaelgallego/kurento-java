@@ -5,6 +5,7 @@
  */
 package org.kurento.client;
 
+import org.kurento.client.internal.TransactionImpl;
 import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.NonReadyRemoteObject;
 import org.kurento.client.internal.client.NonReadyRemoteObject.NonReadyMode;

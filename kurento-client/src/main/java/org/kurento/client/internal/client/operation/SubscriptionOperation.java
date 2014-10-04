@@ -2,6 +2,7 @@ package org.kurento.client.internal.client.operation;
 
 import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.Continuation;
+import org.kurento.client.InternalInfoGetter;
 import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.ListenerSubscriptionImpl;
 import org.kurento.client.internal.client.RemoteObject;
@@ -29,7 +30,7 @@ public class SubscriptionOperation extends Operation {
 	@Override
 	public void exec(RomManager manager) {
 
-		String subscription = object.getRemoteObject()
+		String subscription = InternalInfoGetter.getRemoteObject(object)
 				.addEventListener(eventType, listener).getSubscription();
 
 		listenerSubscription.setSubscription(subscription);
@@ -42,7 +43,8 @@ public class SubscriptionOperation extends Operation {
 	@Override
 	public void exec(RomManager manager, final Continuation<Void> cont) {
 
-		object.getRemoteObject().addEventListener(eventType, listener,
+		InternalInfoGetter.getRemoteObject(object).addEventListener(eventType,
+				listener,
 				new DefaultContinuation<ListenerSubscriptionImpl>(cont) {
 
 					@Override
@@ -60,16 +62,16 @@ public class SubscriptionOperation extends Operation {
 	public RequestAndResponseType createRequest(
 			RomClientJsonRpcClient romClientJsonRpcClient) {
 
-		return romClientJsonRpcClient.createSubscribeRequest(object
-				.getRemoteObject().getObjectRef(), eventType);
+		return romClientJsonRpcClient.createSubscribeRequest(InternalInfoGetter
+				.getRemoteObject(object).getObjectRef(), eventType);
 	}
 
 	@Override
 	public void processResponse(Object response) {
 
 		listenerSubscription.setSubscription((String) response);
-		((RemoteObject) object.getRemoteObject()).addListener(eventType,
-				listener);
+		((RemoteObject) InternalInfoGetter.getRemoteObject(object))
+				.addListener(eventType, listener);
 	}
 
 }

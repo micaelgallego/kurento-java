@@ -2,6 +2,7 @@ package org.kurento.client.internal.client.operation;
 
 import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.Continuation;
+import org.kurento.client.InternalInfoGetter;
 import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.RemoteObject;
 import org.kurento.client.internal.client.RemoteObjectFacade;
@@ -26,7 +27,7 @@ public class MediaObjectCreationOperation extends Operation {
 	public void exec(RomManager manager) {
 		RemoteObject remoteObject = manager
 				.create(className, constructorParams);
-		mediaObject.setRemoteObject(remoteObject);
+		InternalInfoGetter.setRemoteObject(mediaObject, remoteObject);
 	}
 
 	@Override
@@ -36,7 +37,8 @@ public class MediaObjectCreationOperation extends Operation {
 					@Override
 					public void onSuccess(RemoteObjectFacade remoteObject)
 							throws Exception {
-						mediaObject.setRemoteObject(remoteObject);
+						InternalInfoGetter.setRemoteObject(mediaObject,
+								remoteObject);
 						cont.onSuccess(null);
 					}
 				});
@@ -53,6 +55,6 @@ public class MediaObjectCreationOperation extends Operation {
 	public void processResponse(Object response) {
 		RemoteObject remoteObject = new RemoteObject((String) response,
 				className, manager);
-		mediaObject.setRemoteObject(remoteObject);
+		InternalInfoGetter.setRemoteObject(mediaObject, remoteObject);
 	}
 }

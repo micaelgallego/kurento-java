@@ -5,6 +5,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 
 import org.kurento.client.internal.ParamAnnotationUtils;
+import org.kurento.client.internal.TransactionImpl;
 import org.kurento.client.internal.client.ListenerSubscriptionImpl;
 import org.kurento.client.internal.client.RemoteObject;
 import org.kurento.client.internal.client.RemoteObjectFacade;
@@ -38,11 +39,11 @@ public class AbstractMediaObject {
 		return tx;
 	}
 
-	public void setInternalMediaPipeline(MediaPipeline internalMediaPipeline) {
+	void setInternalMediaPipeline(MediaPipeline internalMediaPipeline) {
 		this.internalMediaPipeline = internalMediaPipeline;
 	}
 
-	public MediaPipeline getInternalMediaPipeline() {
+	MediaPipeline getInternalMediaPipeline() {
 		return internalMediaPipeline;
 	}
 
@@ -102,7 +103,7 @@ public class AbstractMediaObject {
 		}
 	}
 
-	public synchronized void setRemoteObject(RemoteObjectFacade remoteObject) {
+	synchronized void setRemoteObject(RemoteObjectFacade remoteObject) {
 		this.remoteObject = remoteObject;
 		this.remoteObject.setPublicObject(this);
 
@@ -169,11 +170,11 @@ public class AbstractMediaObject {
 		}
 	}
 
-	public RemoteObjectFacade getRemoteObject() {
+	RemoteObjectFacade getRemoteObject() {
 		return remoteObject;
 	}
 
-	public RomManager getRomManager() {
+	RomManager getRomManager() {
 		return remoteObject.getRomManager();
 	}
 
