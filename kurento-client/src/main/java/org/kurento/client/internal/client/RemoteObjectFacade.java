@@ -18,7 +18,7 @@ public interface RemoteObjectFacade {
 	public abstract Object invoke(String method, Props params, Type type);
 
 	public abstract void invoke(String method, Props params, Type type,
-			Continuation cont);
+			Continuation<?> cont);
 
 	public abstract void release();
 

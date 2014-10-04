@@ -118,6 +118,7 @@ public class AbstractMediaObject {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	protected ListenerSubscription subscribeEventListener(
 			final EventListener<?> clientListener,
 			final Class<? extends Event> eventClass, Continuation<?> cont) {

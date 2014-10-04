@@ -87,7 +87,8 @@ public class NonReadyRemoteObject implements RemoteObjectFacade {
 	}
 
 	@Override
-	public void invoke(String method, Props params, Type type, Continuation cont) {
+	public void invoke(String method, Props params, Type type,
+			Continuation<?> cont) {
 
 		switch (nonReadyMode) {
 		case CREATION:
