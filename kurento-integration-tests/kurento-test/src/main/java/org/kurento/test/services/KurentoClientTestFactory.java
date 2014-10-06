@@ -58,7 +58,7 @@ public class KurentoClientTestFactory {
 						wsUri);
 
 				return new JsonRpcClientWebSocket(wsUri,
-						new JsonRpcConnectionListenerKurento(listener));
+						JsonRpcConnectionListenerKurento.create(listener));
 			} else {
 
 				return createJsonRpcClient("kcs");

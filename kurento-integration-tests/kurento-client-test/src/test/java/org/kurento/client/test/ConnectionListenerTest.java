@@ -43,7 +43,7 @@ public class ConnectionListenerTest {
 				.startKurentoMediaServer();
 
 		KurentoControlServerManager kcs = KurentoServicesTestHelper
-				.startKurentoControlServer();
+				.startKurentoControlServer("ws://localhost:9999/kurento");
 
 		final CountDownLatch disconnectedLatch = new CountDownLatch(1);
 
@@ -85,7 +85,7 @@ public class ConnectionListenerTest {
 
 		kcs.destroy();
 
-		if (!disconnectedLatch.await(20, TimeUnit.SECONDS)) {
+		if (!disconnectedLatch.await(60, TimeUnit.SECONDS)) {
 			fail("Event disconnected should be thrown when kcs is destroyed");
 		}
 

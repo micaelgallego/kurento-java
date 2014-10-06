@@ -5,19 +5,23 @@ import java.util.List;
 
 import org.kurento.client.Continuation;
 import org.kurento.client.internal.client.operation.Operation;
+import org.kurento.client.internal.server.KurentoServerException;
 import org.kurento.client.internal.transport.serialization.ObjectRefsManager;
+import org.kurento.jsonrpc.JsonRpcErrorException;
 import org.kurento.jsonrpc.Props;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RomManager implements ObjectRefsManager {
 
+	private static final String METHOD_NOT_FOUND_ERROR_MSG = "Method not found.";
+
 	private static final Logger log = LoggerFactory.getLogger(RomManager.class);
 
 	private final RomClientObjectManager manager;
 	private final RomClient client;
 
-	private static final boolean SERVER_TRANSACTION_SUPPORT = true;
+	private boolean serverTransactionSupport = true;
 
 	public RomManager(RomClient client) {
 		this.client = client;
@@ -143,8 +147,23 @@ public class RomManager implements ObjectRefsManager {
 		for (Operation op : operations) {
 			op.setManager(this);
 		}
-		if (SERVER_TRANSACTION_SUPPORT) {
-			client.transaction(operations);
+		if (serverTransactionSupport) {
+			try {
+				client.transaction(operations);
+			} catch (KurentoServerException e) {
+
+				Throwable cause = e.getCause();
+				if (cause instanceof JsonRpcErrorException
+						&& cause.getMessage()
+								.equals(METHOD_NOT_FOUND_ERROR_MSG)) {
+					serverTransactionSupport = false;
+					execOperations(operations);
+
+				} else {
+					throw e;
+				}
+			}
+
 		} else {
 			log.debug("Start transaction execution");
 			// TODO Improve error handling and sort operations in smart way
@@ -162,8 +181,19 @@ public class RomManager implements ObjectRefsManager {
 		for (Operation op : operations) {
 			op.setManager(this);
 		}
-		if (SERVER_TRANSACTION_SUPPORT) {
-			client.transaction(operations, continuation);
+		if (serverTransactionSupport) {
+			client.transaction(operations, new Continuation<Void>() {
+				@Override
+				public void onSuccess(Void result) throws Exception {
+					continuation.onSuccess(null);
+				}
+
+				@Override
+				public void onError(Throwable cause) throws Exception {
+					RomManager.this.serverTransactionSupport = false;
+					execOperations(operations, continuation);
+				}
+			});
 		} else {
 			log.debug("Start transaction async execution");
 			execOperationsRec(operations, continuation);

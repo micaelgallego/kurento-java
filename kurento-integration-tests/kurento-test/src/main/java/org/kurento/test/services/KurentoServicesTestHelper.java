@@ -185,11 +185,15 @@ public class KurentoServicesTestHelper {
 	}
 
 	public static KurentoControlServerManager startKurentoControlServer() {
+		return startKurentoControlServer(getProperty(KCS_WS_URI_PROP,
+				KCS_WS_URI_DEFAULT));
+	}
+
+	public static KurentoControlServerManager startKurentoControlServer(
+			String wsUriProp) {
 
 		JsonRpcClient client = KurentoClientTestFactory
 				.createJsonRpcClient("kcs");
-
-		String wsUriProp = getProperty(KCS_WS_URI_PROP, KCS_WS_URI_DEFAULT);
 
 		try {
 

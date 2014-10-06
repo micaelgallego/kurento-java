@@ -39,7 +39,7 @@ public class KurentoClient {
 	public static KurentoClient create(String websocketUrl,
 			KurentoConnectionListener listener) {
 		return new KurentoClient(new JsonRpcClientWebSocket(websocketUrl,
-				new JsonRpcConnectionListenerKurento(listener)));
+				JsonRpcConnectionListenerKurento.create(listener)));
 	}
 
 	@PreDestroy

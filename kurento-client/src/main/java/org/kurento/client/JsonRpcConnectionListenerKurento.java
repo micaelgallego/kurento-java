@@ -26,4 +26,14 @@ public class JsonRpcConnectionListenerKurento implements
 		listener.disconnected();
 	}
 
+	public static JsonRpcWSConnectionListener create(
+			KurentoConnectionListener listener) {
+
+		if (listener == null) {
+			return null;
+		}
+
+		return new JsonRpcConnectionListenerKurento(listener);
+	}
+
 }
