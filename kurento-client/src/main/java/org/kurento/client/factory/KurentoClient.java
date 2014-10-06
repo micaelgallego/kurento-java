@@ -17,10 +17,6 @@ package org.kurento.client.factory;
 import javax.annotation.PreDestroy;
 
 import org.kurento.client.MediaPipeline;
-import org.kurento.client.internal.client.RomManager;
-import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient;
-import org.kurento.jsonrpc.client.JsonRpcClient;
-import org.kurento.jsonrpc.client.JsonRpcClientWebSocket;
 
 /**
  * Factory to create {@link MediaPipeline} in the media server.
@@ -32,36 +28,26 @@ import org.kurento.jsonrpc.client.JsonRpcClientWebSocket;
 @Deprecated
 public class KurentoClient {
 
-	protected RomManager manager;
+	private org.kurento.client.KurentoClient kurentoClient;
+
+	public KurentoClient(org.kurento.client.KurentoClient kurentoClient) {
+		this.kurentoClient = kurentoClient;
+	}
 
 	public static KurentoClient create(String websocketUrl) {
-		return new KurentoClient(new JsonRpcClientWebSocket(websocketUrl));
-	}
-
-	KurentoClient(JsonRpcClient client) {
-		this.manager = new RomManager(new RomClientJsonRpcClient(client));
-	}
-
-	public RomManager getRomManager() {
-		return manager;
+		return new KurentoClient(
+				org.kurento.client.KurentoClient.create(websocketUrl));
 	}
 
 	@PreDestroy
 	public void destroy() {
-		manager.destroy();
-	}
-
-	public static KurentoClient createFromJsonRpcClient(
-			JsonRpcClient jsonRpcClient) {
-		return new KurentoClient(jsonRpcClient);
+		kurentoClient.destroy();
 	}
 
 	@Deprecated
 	public MediaPipeline createMediaPipeline() {
-		MediaPipeline pipeline = MediaPipeline.with(
-				new org.kurento.client.KurentoClient(manager)).create();
+		MediaPipeline pipeline = MediaPipeline.with(kurentoClient).create();
 		pipeline.start();
 		return pipeline;
 	}
-
 }

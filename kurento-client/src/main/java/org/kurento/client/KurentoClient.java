@@ -36,16 +36,10 @@ public class KurentoClient {
 		return new KurentoClient(new JsonRpcClientWebSocket(websocketUrl));
 	}
 
-	KurentoClient(JsonRpcClient client) {
-		this.manager = new RomManager(new RomClientJsonRpcClient(client));
-	}
-
-	public KurentoClient(RomManager manager) {
-		this.manager = manager;
-	}
-
-	public RomManager getRomManager() {
-		return manager;
+	public static KurentoClient create(String websocketUrl,
+			KurentoConnectionListener listener) {
+		return new KurentoClient(new JsonRpcClientWebSocket(websocketUrl,
+				new JsonRpcConnectionListenerKurento(listener)));
 	}
 
 	@PreDestroy
@@ -53,9 +47,20 @@ public class KurentoClient {
 		manager.destroy();
 	}
 
+	KurentoClient(JsonRpcClient client) {
+		this.manager = new RomManager(new RomClientJsonRpcClient(client));
+	}
+
+	KurentoClient(RomManager manager) {
+		this.manager = manager;
+	}
+
+	RomManager getRomManager() {
+		return manager;
+	}
+
 	public static KurentoClient createFromJsonRpcClient(
 			JsonRpcClient jsonRpcClient) {
 		return new KurentoClient(jsonRpcClient);
 	}
-
 }

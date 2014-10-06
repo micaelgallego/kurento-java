@@ -142,15 +142,21 @@ public class KurentoMediaServerManager {
 
 		createKurentoConf();
 
-		File logFile = new File(testDir + testClassName, testMethodName
-				+ "-kms.log");
-		KurentoServicesTestHelper.setServerLogFilePath(logFile);
+		if (testDir != null) {
 
-		log.debug("Log file: {}", logFile.getAbsolutePath());
+			File logFile = new File(testDir + testClassName, testMethodName
+					+ "-kms.log");
+			KurentoServicesTestHelper.setServerLogFilePath(logFile);
 
-		Shell.runAndWait("sh", "-c",
-				workspace + "kurento.sh > " + logFile.getAbsolutePath()
-						+ " 2>&1");
+			log.debug("Log file: {}", logFile.getAbsolutePath());
+
+			Shell.runAndWait("sh", "-c",
+					workspace + "kurento.sh > " + logFile.getAbsolutePath()
+							+ " 2>&1");
+		} else {
+
+			Shell.runAndWait("sh", "-c", workspace + "kurento.sh");
+		}
 
 		waitForKurentoMediaServer();
 	}
@@ -229,7 +235,7 @@ public class KurentoMediaServerManager {
 		}
 	}
 
-	public void stop() {
+	public void destroy() {
 		int numKmsProcesses = 0;
 		// Max timeout waiting kms ending: 5 seconds
 		long timeout = System.currentTimeMillis() + 5000;
@@ -307,6 +313,10 @@ public class KurentoMediaServerManager {
 
 	public static String getWorkspace() {
 		return workspace;
+	}
+
+	public String getLocalhostWsUrl() {
+		return wsUri;
 	}
 
 }

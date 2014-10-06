@@ -89,7 +89,7 @@ public class KurentoServicesTestHelper {
 
 	private static HttpServer httpServer;
 	private static KurentoMediaServerManager kms;
-	private static KurentoControlServerManager mediaConnector;
+	private static KurentoControlServerManager kcs;
 
 	private static String testCaseName;
 	private static String testName;
@@ -116,7 +116,7 @@ public class KurentoServicesTestHelper {
 			startKurentoControlServer();
 			break;
 		case AUTOSTART_TEST_SUITE_VALUE:
-			if (mediaConnector == null) {
+			if (kcs == null) {
 				startKurentoControlServer();
 			}
 			break;
@@ -142,7 +142,7 @@ public class KurentoServicesTestHelper {
 			startKurentoMediaServer();
 			break;
 		case AUTOSTART_TEST_SUITE_VALUE:
-			if (mediaConnector == null) {
+			if (kms == null) {
 				startKurentoMediaServer();
 			}
 			break;
@@ -152,7 +152,7 @@ public class KurentoServicesTestHelper {
 		}
 	}
 
-	public static void startKurentoMediaServer() {
+	public static KurentoMediaServerManager startKurentoMediaServer() {
 
 		String transport = PropertiesManager.getProperty(KMS_TRANSPORT_PROP,
 				KMS_TRANSPORT_DEFAULT);
@@ -180,9 +180,11 @@ public class KurentoServicesTestHelper {
 		kms.setTestMethodName(testName);
 		kms.setTestDir(testDir);
 		kms.start();
+
+		return kms;
 	}
 
-	private static void startKurentoControlServer() {
+	public static KurentoControlServerManager startKurentoControlServer() {
 
 		JsonRpcClient client = KurentoClientTestFactory
 				.createJsonRpcClient("kcs");
@@ -194,7 +196,9 @@ public class KurentoServicesTestHelper {
 			URI wsUri = new URI(wsUriProp);
 			int port = wsUri.getPort();
 			String path = wsUri.getPath();
-			mediaConnector = new KurentoControlServerManager(client, port, path);
+			kcs = new KurentoControlServerManager(client, port, path);
+
+			return kcs;
 
 		} catch (URISyntaxException e) {
 			throw new KurentoException(KCS_WS_URI_PROP + " invalid format: "
@@ -202,10 +206,12 @@ public class KurentoServicesTestHelper {
 		}
 	}
 
-	public static void startHttpServer() {
+	public static HttpServer startHttpServer() {
 		try {
 			httpServer = new HttpServer(getAppHttpPort());
 			httpServer.start();
+
+			return httpServer;
 		} catch (Exception e) {
 			throw new RuntimeException("Exception starting http server", e);
 		}
@@ -218,16 +224,16 @@ public class KurentoServicesTestHelper {
 		teardownKurentoControlServer();
 	}
 
-	private static void teardownKurentoControlServer() {
-		if (mediaConnector != null && kcsAutostart.equals(AUTOSTART_TEST_VALUE)) {
-			mediaConnector.destroy();
-			mediaConnector = null;
+	public static void teardownKurentoControlServer() {
+		if (kcs != null && kcsAutostart.equals(AUTOSTART_TEST_VALUE)) {
+			kcs.destroy();
+			kcs = null;
 		}
 	}
 
-	private static void teardownKurentoMediaServer() {
+	public static void teardownKurentoMediaServer() {
 		if (kms != null && kmsAutostart.equals(AUTOSTART_TEST_VALUE)) {
-			kms.stop();
+			kms.destroy();
 			kms = null;
 		}
 	}

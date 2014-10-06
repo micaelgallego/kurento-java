@@ -188,4 +188,8 @@ public class RomManager implements ObjectRefsManager {
 		}
 	}
 
+	public RomClient getRomClient() {
+		return client;
+	}
+
 }

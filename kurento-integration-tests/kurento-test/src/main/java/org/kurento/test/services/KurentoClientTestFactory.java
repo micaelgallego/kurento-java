@@ -14,7 +14,9 @@ import static org.kurento.test.services.KurentoServicesTestHelper.KMS_WS_URI_PRO
 import java.lang.reflect.Constructor;
 import java.security.InvalidParameterException;
 
+import org.kurento.client.JsonRpcConnectionListenerKurento;
 import org.kurento.client.KurentoClient;
+import org.kurento.client.KurentoConnectionListener;
 import org.kurento.commons.Address;
 import org.kurento.jsonrpc.client.JsonRpcClient;
 import org.kurento.jsonrpc.client.JsonRpcClientWebSocket;
@@ -27,11 +29,21 @@ public class KurentoClientTestFactory {
 			.getLogger(KurentoClientTestFactory.class);
 
 	public static KurentoClient createKurentoForTest() {
-		return KurentoClient
-				.createFromJsonRpcClient(createJsonRpcClient("client"));
+		return createKurentoForTest(null);
+	}
+
+	public static KurentoClient createKurentoForTest(
+			KurentoConnectionListener listener) {
+		return KurentoClient.createFromJsonRpcClient(createJsonRpcClient(
+				"client", listener));
 	}
 
 	public static JsonRpcClient createJsonRpcClient(String prefix) {
+		return createJsonRpcClient(prefix, null);
+	}
+
+	public static JsonRpcClient createJsonRpcClient(String prefix,
+			KurentoConnectionListener listener) {
 
 		String kmsTransport;
 
@@ -45,7 +57,8 @@ public class KurentoClientTestFactory {
 						"Connecting kurento client with websockets to uri '{}'",
 						wsUri);
 
-				return new JsonRpcClientWebSocket(wsUri);
+				return new JsonRpcClientWebSocket(wsUri,
+						new JsonRpcConnectionListenerKurento(listener));
 			} else {
 
 				return createJsonRpcClient("kcs");
