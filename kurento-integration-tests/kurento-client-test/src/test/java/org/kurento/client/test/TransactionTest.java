@@ -119,7 +119,7 @@ public class TransactionTest extends KurentoClientTest {
 	public void usePlainMethodsWithNewObjectsAsParamsInsideTx()
 			throws InterruptedException, ExecutionException {
 
-		// Pipeline creation (implicit transaction)
+		// Pipeline creation (no transaction)
 		MediaPipeline pipeline = MediaPipeline.with(kurentoClient).create();
 		PlayerEndpoint player = PlayerEndpoint.with(pipeline,
 				"http://files.kurento.org/video/small.webm").create();
@@ -184,13 +184,19 @@ public class TransactionTest extends KurentoClientTest {
 	@Test
 	public void waitReadyTest() throws InterruptedException, ExecutionException {
 
-		// Pipeline creation (implicit transaction)
-		MediaPipeline pipeline = MediaPipeline.with(kurentoClient).create();
+		// Pipeline creation (transaction)
+
+		Transaction tx = kurentoClient.beginTransaction();
+
+		MediaPipeline pipeline = MediaPipeline.with(kurentoClient).create(tx);
+
 		final PlayerEndpoint player = PlayerEndpoint.with(pipeline,
-				"http://files.kurento.org/video/small.webm").create();
+				"http://files.kurento.org/video/small.webm").create(tx);
+
 		HttpGetEndpoint httpGetEndpoint = HttpGetEndpoint.with(pipeline)
-				.create();
-		player.connect(httpGetEndpoint);
+				.create(tx);
+
+		player.connect(tx, httpGetEndpoint);
 
 		final CountDownLatch readyLatch = new CountDownLatch(1);
 
@@ -207,6 +213,8 @@ public class TransactionTest extends KurentoClientTest {
 
 		assertThat(readyLatch.getCount(), is(1l));
 
+		tx.commit();
+
 		if (!readyLatch.await(5000, TimeUnit.SECONDS)) {
 			fail("waitForReady not unblocked in 5s");
 		}
@@ -215,18 +223,26 @@ public class TransactionTest extends KurentoClientTest {
 	@Test
 	public void whenReadyTest() throws InterruptedException, ExecutionException {
 
-		// Pipeline creation (implicit transaction)
-		MediaPipeline pipeline = MediaPipeline.with(kurentoClient).create();
+		// Pipeline creation (transaction)
+
+		Transaction tx = kurentoClient.beginTransaction();
+
+		MediaPipeline pipeline = MediaPipeline.with(kurentoClient).create(tx);
+
 		final PlayerEndpoint player = PlayerEndpoint.with(pipeline,
-				"http://files.kurento.org/video/small.webm").create();
+				"http://files.kurento.org/video/small.webm").create(tx);
+
 		HttpGetEndpoint httpGetEndpoint = HttpGetEndpoint.with(pipeline)
-				.create();
-		player.connect(httpGetEndpoint);
+				.create(tx);
+
+		player.connect(tx, httpGetEndpoint);
 
 		AsyncResultManager<PlayerEndpoint> async = new AsyncResultManager<>(
 				"whenReady");
 
 		player.whenReady(async.getContinuation());
+
+		tx.commit();
 
 		PlayerEndpoint newPlayer = async.waitForResult();
 
@@ -236,7 +252,8 @@ public class TransactionTest extends KurentoClientTest {
 	@Test
 	public void futureTest() throws InterruptedException, ExecutionException {
 
-		// Pipeline creation (implicit transaction)
+		// Pipeline creation (no transaction)
+
 		MediaPipeline pipeline = MediaPipeline.with(kurentoClient).create();
 
 		PlayerEndpoint player = PlayerEndpoint.with(pipeline,
