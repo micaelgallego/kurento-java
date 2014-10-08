@@ -42,7 +42,7 @@ public class KurentoControlServerApp implements JsonRpcConfigurer {
 	private static final String OAUTHSERVER_URL_DEFAULT = "";
 
 	public static final String WEBSOCKET_PORT_PROPERTY = "controlServer.net.websocket.port";
-	public static final String WEBSOCKET_PORT_DEFAULT = "8888";
+	public static final String WEBSOCKET_PORT_DEFAULT = "8887";
 
 	public static final String WEBSOCKET_PATH_PROPERTY = "controlServer.net.websocket.path";
 	public static final String WEBSOCKET_PATH_DEFAULT = "kurento";
