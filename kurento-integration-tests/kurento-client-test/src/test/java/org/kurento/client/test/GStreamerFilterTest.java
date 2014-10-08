@@ -62,7 +62,7 @@ public class GStreamerFilterTest extends MediaPipelineBaseTest {
 		AsyncEventManager<EndOfStreamEvent> async = new AsyncEventManager<EndOfStreamEvent>(
 				"EndOfStream event");
 
-		pipeline.start();
+		 
 
 		player.addEndOfStreamListener(async.getMediaEventListener());
 

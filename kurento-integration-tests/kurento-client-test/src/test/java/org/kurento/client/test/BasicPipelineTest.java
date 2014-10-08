@@ -33,8 +33,6 @@ public class BasicPipelineTest extends MediaPipelineBaseTest {
 
 		player.connect(httpGetEndpoint);
 
-		pipeline.start();
-
 		String url = httpGetEndpoint.getUrl();
 
 		player.release();

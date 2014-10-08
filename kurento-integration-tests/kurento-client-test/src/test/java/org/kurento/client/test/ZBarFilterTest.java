@@ -74,7 +74,7 @@ public class ZBarFilterTest extends MediaPipelineBaseTest {
 
 		zbar.addCodeFoundListener(async.getMediaEventListener());
 
-		pipeline.start();
+		 
 
 		player.play();
 

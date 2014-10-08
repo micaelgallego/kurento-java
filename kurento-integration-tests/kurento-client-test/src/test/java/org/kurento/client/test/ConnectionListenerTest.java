@@ -81,8 +81,6 @@ public class ConnectionListenerTest {
 
 		player.connect(httpGetEndpoint);
 
-		pipeline.start();
-
 		kcs.destroy();
 
 		if (!disconnectedLatch.await(60, TimeUnit.SECONDS)) {

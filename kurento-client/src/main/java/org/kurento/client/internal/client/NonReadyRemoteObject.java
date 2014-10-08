@@ -1,8 +1,5 @@
 package org.kurento.client.internal.client;
 
-import static org.kurento.client.InternalInfoGetter.addOperation;
-import static org.kurento.client.InternalInfoGetter.getInternalMediaPipeline;
-
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,6 +10,7 @@ import org.kurento.client.Continuation;
 import org.kurento.client.MediaObjectNonReadyException;
 import org.kurento.client.MediaPipelineNotStartedException;
 import org.kurento.client.TransactionNotExecutedException;
+import org.kurento.client.internal.TransactionImpl;
 import org.kurento.client.internal.client.RemoteObject.RemoteObjectEventListener;
 import org.kurento.client.internal.client.operation.InvokeOperation;
 import org.kurento.client.internal.client.operation.SubscriptionOperation;
@@ -27,14 +25,14 @@ public class NonReadyRemoteObject implements RemoteObjectFacade {
 	private static final Set<String> NON_READY_VALID_METHODS = new HashSet<>(
 			Arrays.asList("connect"));
 
-	private AbstractMediaObject mediaObject;
+	private TransactionImpl tx;
 	private NonReadyMode nonReadyMode;
 	private String objectRef;
 
-	public NonReadyRemoteObject(String objectId,
-			AbstractMediaObject mediaObject, NonReadyMode nonReadyMode) {
+	public NonReadyRemoteObject(String objectId, TransactionImpl tx,
+			NonReadyMode nonReadyMode) {
 		this.objectRef = objectId;
-		this.mediaObject = mediaObject;
+		this.tx = tx;
 		this.nonReadyMode = nonReadyMode;
 	}
 
@@ -45,12 +43,12 @@ public class NonReadyRemoteObject implements RemoteObjectFacade {
 
 	@Override
 	public AbstractMediaObject getPublicObject() {
-		return mediaObject;
+		return null;
 	}
 
 	@Override
 	public void setPublicObject(AbstractMediaObject mediaObject) {
-		this.mediaObject = mediaObject;
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -66,10 +64,8 @@ public class NonReadyRemoteObject implements RemoteObjectFacade {
 		case CREATION:
 			if (NON_READY_VALID_METHODS.contains(method)) {
 
-				addOperation(
-						getInternalMediaPipeline(mediaObject),
-						new InvokeOperation((AbstractMediaObject) this
-								.getPublicObject(), method, params, returnType));
+				tx.addOperation(new InvokeOperation((AbstractMediaObject) this
+						.getPublicObject(), method, params, returnType));
 
 				// TODO Only non-return value methods are allowed
 				return null;
@@ -94,10 +90,8 @@ public class NonReadyRemoteObject implements RemoteObjectFacade {
 		case CREATION:
 			if (NON_READY_VALID_METHODS.contains(method)) {
 
-				addOperation(
-						getInternalMediaPipeline(mediaObject),
-						new InvokeOperation((AbstractMediaObject) this
-								.getPublicObject(), method, params, type));
+				tx.addOperation(new InvokeOperation((AbstractMediaObject) this
+						.getPublicObject(), method, params, type));
 
 				// TODO Only non-return value methods are allowed
 				try {
@@ -149,7 +143,7 @@ public class NonReadyRemoteObject implements RemoteObjectFacade {
 				(AbstractMediaObject) this.getPublicObject(), eventType,
 				listener);
 
-		addOperation(getInternalMediaPipeline(mediaObject), op);
+		tx.addOperation(op);
 
 		return op.getListenerSubscription();
 	}

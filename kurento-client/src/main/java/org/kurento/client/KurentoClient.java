@@ -16,6 +16,7 @@ package org.kurento.client;
 
 import javax.annotation.PreDestroy;
 
+import org.kurento.client.internal.TransactionImpl;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient;
 import org.kurento.jsonrpc.client.JsonRpcClient;
@@ -62,5 +63,9 @@ public class KurentoClient {
 	public static KurentoClient createFromJsonRpcClient(
 			JsonRpcClient jsonRpcClient) {
 		return new KurentoClient(jsonRpcClient);
+	}
+
+	public Transaction beginTransaction() {
+		return new TransactionImpl(manager);
 	}
 }

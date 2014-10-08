@@ -8,10 +8,8 @@ package org.kurento.client;
 import org.kurento.client.internal.RemoteClass;
 import org.kurento.client.internal.TransactionImpl;
 import org.kurento.client.internal.client.NonReadyRemoteObject;
-import org.kurento.client.internal.client.NonReadyRemoteObject.NonReadyMode;
+import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
-import org.kurento.client.internal.client.operation.MediaPipelineCreationOperation;
-import org.kurento.client.internal.client.operation.Operation;
 
 /**
  *
@@ -25,77 +23,55 @@ public class MediaPipeline extends MediaObject {
 
 	private RomManager manager;
 
-	public MediaPipeline(RomManager manager) {
-		this(manager, new TransactionImpl(manager));
-	}
+	// public MediaPipeline(RomManager manager) {
+	// this(manager, new TransactionImpl(manager));
+	// }
 
-	private MediaPipeline(RomManager manager, TransactionImpl tx) {
-		super(new NonReadyRemoteObject(tx.nextObjectRef(), null,
-				NonReadyMode.CREATION), tx);
-		this.setInternalMediaPipeline(this);
-		this.tx.addOperation(new MediaPipelineCreationOperation(this));
-		((NonReadyRemoteObject) remoteObject).setPublicObject(this);
-		this.manager = manager;
+	// private MediaPipeline(RomManager manager, TransactionImpl tx) {
+	// super(new NonReadyRemoteObject(tx.nextObjectRef(), null,
+	// NonReadyMode.CREATION), tx);
+	// this.setInternalMediaPipeline(this);
+	// this.tx.addOperation(new MediaPipelineCreationOperation(this));
+	// ((NonReadyRemoteObject) remoteObject).setPublicObject(this);
+	// this.manager = manager;
+	// }
+
+	public MediaPipeline(RemoteObjectFacade remoteObject, Transaction tx) {
+		super(remoteObject, tx);
+		if (!(remoteObject instanceof NonReadyRemoteObject)) {
+			manager = remoteObject.getRomManager();
+		}
 	}
 
 	public static Builder with(KurentoClient client) {
 		return new Builder(client);
 	}
 
-	public void start() {
-		if (isReady()) {
-			throw new IllegalStateException("MediaPipeline is yet started");
-		}
-		tx.exec();
-	}
-
-	public void start(final Continuation<MediaPipeline> continuation) {
-		if (isReady()) {
-			throw new IllegalStateException("MediaPipeline is yet started");
-		}
-		tx.exec(new Continuation<Void>() {
-			@Override
-			public void onSuccess(Void result) throws Exception {
-				continuation.onSuccess(MediaPipeline.this);
-			}
-
-			@Override
-			public void onError(Throwable cause) throws Exception {
-				continuation.onError(cause);
-			}
-		});
-	}
-
-	void addOperation(Operation operation) {
-		tx.addOperation(operation);
-	}
-
-	public Transaction getCreationTransaction() {
-		return tx;
-	}
-
-	public static class Builder {
-
-		KurentoClient client;
-
-		Builder(KurentoClient client) {
-			this.client = client;
-		}
-
-		public MediaPipeline create() {
-			return new MediaPipeline(client.getRomManager());
-		}
-
-		public void createAsync(final Continuation<MediaPipeline> continuation) {
-			try {
-				continuation.onSuccess(create());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+	synchronized void setRemoteObject(RemoteObjectFacade remoteObject) {
+		super.setRemoteObject(remoteObject);
+		if (!(remoteObject instanceof NonReadyRemoteObject)) {
+			manager = remoteObject.getRomManager();
 		}
 	}
 
-	public Transaction newTransaction() {
+	// void addOperation(Operation operation) {
+	// tx.addOperation(operation);
+	// }
+
+	public static class Builder extends AbstractBuilder<MediaPipeline> {
+
+		public Builder(KurentoClient client) {
+			super(MediaPipeline.class, client.getRomManager());
+		}
+
+		@Override
+		protected MediaPipeline createMediaObject(
+				RemoteObjectFacade remoteObject, Transaction tx) {
+			return new MediaPipeline(remoteObject, tx);
+		}
+	}
+
+	public Transaction beginTransaction() {
 		return new TransactionImpl(manager);
 	}
 

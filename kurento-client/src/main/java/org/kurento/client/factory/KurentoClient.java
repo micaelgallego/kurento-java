@@ -47,7 +47,7 @@ public class KurentoClient {
 	@Deprecated
 	public MediaPipeline createMediaPipeline() {
 		MediaPipeline pipeline = MediaPipeline.with(kurentoClient).create();
-		pipeline.start();
+		 
 		return pipeline;
 	}
 }

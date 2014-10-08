@@ -91,54 +91,53 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 			}
 		};
 
-		if (constObject == null || constObject.isReady()) {
+		// if (constObject == null || constObject.isReady()) {
 
-			if (manager == null && constObject != null) {
-				manager = constObject.getRomManager();
-			}
+		if (manager == null && constObject != null) {
+			manager = constObject.getRomManager();
+		}
 
-			if (continuation == null) {
+		if (continuation == null) {
 
-				RemoteObjectFacade remoteObject = manager.create(
-						clazz.getSimpleName(), props);
+			RemoteObjectFacade remoteObject = manager.create(
+					clazz.getSimpleName(), props);
 
-				mediaObject = createMediaObjectConst(constObject, remoteObject,
-						null);
-
-			} else {
-
-				manager.create(clazz.getSimpleName(), props,
-						defaultContinuation);
-
-				return null;
-			}
+			mediaObject = createMediaObjectConst(constObject, remoteObject,
+					null);
 
 		} else {
 
-			MediaPipeline pipeline = constObject.getInternalMediaPipeline();
+			manager.create(clazz.getSimpleName(), props, defaultContinuation);
 
-			TransactionImpl tx = (TransactionImpl) pipeline
-					.getActiveTransaction();
-
-			NonReadyRemoteObject remoteObject = new NonReadyRemoteObject(
-					tx.nextObjectRef(), pipeline, NonReadyMode.CREATION);
-
-			mediaObject = createMediaObjectConst(constObject, remoteObject,
-					pipeline.getActiveTransaction());
-
-			if (continuation != null) {
-				try {
-					continuation.onSuccess(mediaObject);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-			MediaObjectCreationOperation op = new MediaObjectCreationOperation(
-					clazz.getSimpleName(), props, mediaObject);
-
-			pipeline.addOperation(op);
+			return null;
 		}
+
+		// } else {
+		//
+		// MediaPipeline pipeline = constObject.getInternalMediaPipeline();
+		//
+		// TransactionImpl tx = (TransactionImpl) pipeline
+		// .getActiveTransaction();
+		//
+		// NonReadyRemoteObject remoteObject = new NonReadyRemoteObject(
+		// tx.nextObjectRef(), pipeline, NonReadyMode.CREATION);
+		//
+		// mediaObject = createMediaObjectConst(constObject, remoteObject,
+		// pipeline.getActiveTransaction());
+		//
+		// if (continuation != null) {
+		// try {
+		// continuation.onSuccess(mediaObject);
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+		// }
+		//
+		// MediaObjectCreationOperation op = new MediaObjectCreationOperation(
+		// clazz.getSimpleName(), props, mediaObject);
+		//
+		// pipeline.addOperation(op);
+		// }
 
 		return mediaObject;
 	}
@@ -158,6 +157,7 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 	}
 
 	private AbstractMediaObject obtainConstructorObject() {
+
 		AbstractMediaObject rootObject = null;
 		for (Prop prop : props) {
 			Object value = prop.getValue();
@@ -175,17 +175,39 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 
 		final AbstractMediaObject constObject = obtainConstructorObject();
 
-		MediaPipeline pipeline = constObject.getInternalMediaPipeline();
+		T mediaObject = null;
+
+		// if (constObject != null) {
+
+		// MediaPipeline pipeline = constObject.getInternalMediaPipeline();
 
 		NonReadyRemoteObject remoteObject = new NonReadyRemoteObject(
-				tx.nextObjectRef(), pipeline, NonReadyMode.TRANSACTION);
+				tx.nextObjectRef(), tx, NonReadyMode.TRANSACTION);
 
-		T mediaObject = createMediaObjectConst(constObject, remoteObject, tx);
+		mediaObject = createMediaObjectConst(constObject, remoteObject, tx);
 
 		MediaObjectCreationOperation op = new MediaObjectCreationOperation(
 				clazz.getSimpleName(), props, mediaObject);
 
 		tx.addOperation(op);
+
+		// } else {
+		//
+		// NonReadyRemoteObject remoteObject = new NonReadyRemoteObject(
+		// tx.nextObjectRef(), null, NonReadyMode.TRANSACTION);
+		//
+		// MediaPipeline mediaPipeline = createMediaObjectConst(null,
+		// remoteObject, tx);
+		//
+		// MediaPipelineCreationOperation op = new
+		// MediaPipelineCreationOperation(
+		// mediaPipeline);
+		//
+		// tx.addOperation(op);
+		//
+		// mediaObject = (T) mediaPipeline;
+		//
+		// }
 
 		return mediaObject;
 	}

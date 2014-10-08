@@ -51,7 +51,7 @@ public class RtpEndpointTest extends SdpBaseTest<RtpEndpoint> {
 		sdp = RtpEndpoint.with(pipeline).create();
 		sdp2 = RtpEndpoint.with(pipeline).create();
 
-		pipeline.start();
+		 
 	}
 
 }

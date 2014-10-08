@@ -143,7 +143,7 @@ public class RomManager implements ObjectRefsManager {
 		return manager;
 	}
 
-	public void execOperations(List<Operation> operations) {
+	public void transaction(List<Operation> operations) {
 		for (Operation op : operations) {
 			op.setManager(this);
 		}
@@ -157,7 +157,7 @@ public class RomManager implements ObjectRefsManager {
 						&& cause.getMessage()
 								.equals(METHOD_NOT_FOUND_ERROR_MSG)) {
 					serverTransactionSupport = false;
-					execOperations(operations);
+					transaction(operations);
 
 				} else {
 					throw e;
@@ -176,7 +176,7 @@ public class RomManager implements ObjectRefsManager {
 
 	// TODO Improve this async exec. Review error handling
 	// TODO Improve error handling and sort operations in smart way
-	public void execOperations(final List<Operation> operations,
+	public void transaction(final List<Operation> operations,
 			final Continuation<Void> continuation) {
 		for (Operation op : operations) {
 			op.setManager(this);
@@ -190,17 +190,18 @@ public class RomManager implements ObjectRefsManager {
 
 				@Override
 				public void onError(Throwable cause) throws Exception {
+					// Retry one more time (Daft Punk)
 					RomManager.this.serverTransactionSupport = false;
-					execOperations(operations, continuation);
+					transaction(operations, continuation);
 				}
 			});
 		} else {
 			log.debug("Start transaction async execution");
-			execOperationsRec(operations, continuation);
+			transactionOperationRec(operations, continuation);
 		}
 	}
 
-	private void execOperationsRec(final List<Operation> operations,
+	private void transactionOperationRec(final List<Operation> operations,
 			final Continuation<Void> cont) {
 		if (operations.size() > 0) {
 			Operation op = operations.remove(0);
@@ -208,7 +209,7 @@ public class RomManager implements ObjectRefsManager {
 			op.exec(this, new DefaultContinuation<Void>(cont) {
 				public void onSuccess(Void result) throws Exception {
 					if (operations.size() > 0) {
-						execOperationsRec(operations, cont);
+						transactionOperationRec(operations, cont);
 					} else {
 						log.debug("End transaction async execution");
 						cont.onSuccess(null);

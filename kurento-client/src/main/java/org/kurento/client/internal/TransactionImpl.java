@@ -25,15 +25,20 @@ public class TransactionImpl implements Transaction {
 		return (Future<E>) op.getFuture();
 	}
 
-	public void exec() {
-		manager.execOperations(operations);
+	public void commit() {
+		manager.transaction(operations);
 	}
 
-	public void exec(Continuation<Void> continuation) {
-		manager.execOperations(operations, continuation);
+	public void commit(Continuation<Void> continuation) {
+		manager.transaction(operations, continuation);
 	}
 
 	public String nextObjectRef() {
 		return "newref:" + (objectRef++);
+	}
+
+	@Override
+	public void rollback() {
+		throw new Error("Not yet implemented");
 	}
 }

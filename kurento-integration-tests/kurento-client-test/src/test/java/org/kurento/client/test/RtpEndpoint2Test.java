@@ -69,7 +69,7 @@ public class RtpEndpoint2Test extends MediaPipelineBaseTest {
 
 		RtpEndpoint rtp = RtpEndpoint.with(pipeline).create();
 
-		pipeline.start();
+		 
 
 		Collection<MediaSource> videoSrcsA = rtp.getMediaSrcs(MediaType.VIDEO);
 		Assert.assertFalse(videoSrcsA.isEmpty());
@@ -94,7 +94,7 @@ public class RtpEndpoint2Test extends MediaPipelineBaseTest {
 
 		player.connect(http);
 
-		pipeline.start();
+		 
 
 		player.play();
 		http.release();
@@ -110,7 +110,7 @@ public class RtpEndpoint2Test extends MediaPipelineBaseTest {
 		player.connect(http, MediaType.AUDIO);
 		player.connect(http, MediaType.VIDEO);
 
-		pipeline.start();
+		 
 
 		player.play();
 		http.release();

@@ -1,7 +1,6 @@
 package org.kurento.client;
 
 import org.kurento.client.internal.client.RemoteObjectFacade;
-import org.kurento.client.internal.client.operation.Operation;
 
 public class InternalInfoGetter {
 
@@ -15,10 +14,10 @@ public class InternalInfoGetter {
 		return mediaObject.getInternalMediaPipeline();
 	}
 
-	public static void addOperation(MediaPipeline mediaPipeline,
-			Operation operation) {
-		mediaPipeline.addOperation(operation);
-	}
+	// public static void addOperation(MediaPipeline mediaPipeline,
+	// Operation operation) {
+	// mediaPipeline.addOperation(operation);
+	// }
 
 	public static void setRemoteObject(AbstractMediaObject mediaObject,
 			RemoteObjectFacade remoteObject) {

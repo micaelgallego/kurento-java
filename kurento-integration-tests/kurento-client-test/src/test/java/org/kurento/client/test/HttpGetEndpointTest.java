@@ -67,8 +67,6 @@ public class HttpGetEndpointTest extends MediaPipelineBaseTest {
 	public void testMethodGetUrl() {
 		HttpGetEndpoint httpEP = HttpGetEndpoint.with(pipeline).create();
 
-		pipeline.start();
-
 		Assert.assertTrue(!httpEP.getUrl().isEmpty());
 	}
 
@@ -101,8 +99,6 @@ public class HttpGetEndpointTest extends MediaPipelineBaseTest {
 			}
 		});
 
-		pipeline.start();
-
 		try (CloseableHttpClient httpclient = HttpClientBuilder.create()
 				.build()) {
 			// This should trigger MediaSessionStartedEvent
@@ -125,10 +121,13 @@ public class HttpGetEndpointTest extends MediaPipelineBaseTest {
 	@Test
 	public void testEventMediaSessionTerminated() throws InterruptedException,
 			ClientProtocolException, IOException {
+
 		final PlayerEndpoint player = PlayerEndpoint.with(pipeline, URL_SMALL)
 				.create();
+
 		HttpGetEndpoint httpEP = HttpGetEndpoint.with(pipeline)
 				.terminateOnEOS().create();
+
 		player.connect(httpEP);
 
 		httpEP.addMediaSessionStartedListener(new EventListener<MediaSessionStartedEvent>() {
@@ -148,8 +147,6 @@ public class HttpGetEndpointTest extends MediaPipelineBaseTest {
 				events.add(event);
 			}
 		});
-
-		pipeline.start();
 
 		try (CloseableHttpClient httpclient = HttpClientBuilder.create()
 				.build()) {
