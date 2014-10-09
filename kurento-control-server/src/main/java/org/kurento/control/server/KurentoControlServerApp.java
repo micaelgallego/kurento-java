@@ -91,7 +91,8 @@ public class KurentoControlServerApp implements JsonRpcConfigurer {
 		try {
 			httpsPort = Integer.parseInt(securePort);
 		} catch (NumberFormatException e) {
-			log.warn("Property '" + WEBSOCKET_PORT_PROPERTY
+			log.warn("Property '" + WEBSOCKET_SECURE_PORT_PROPERTY
+					+ "' with value '" + securePort
 					+ "' can't be parsed as integer. Error: " + e.getMessage()
 					+ ". Defaulting to port 8443");
 		}
@@ -225,6 +226,9 @@ public class KurentoControlServerApp implements JsonRpcConfigurer {
 		properties.put("server.port", port);
 		application.setDefaultProperties(properties);
 
+		log.info("KCS ws uri: ws://127.0.0.1:" + port + "/"
+				+ getProperty(WEBSOCKET_PATH_PROPERTY, WEBSOCKET_PATH_DEFAULT));
+
 		return application.run();
 	}
 
@@ -246,6 +250,7 @@ public class KurentoControlServerApp implements JsonRpcConfigurer {
 			if (configFile != null && Files.exists(configFile)) {
 				ConfigFilePropertyHolder
 						.configurePropertiesFromConfigFile(configFile);
+				log.info("Loading config file in path " + configFile);
 			} else {
 				log.warn("Config file not found. Using all default values");
 			}
