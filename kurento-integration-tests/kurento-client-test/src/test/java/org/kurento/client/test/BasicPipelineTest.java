@@ -39,4 +39,5 @@ public class BasicPipelineTest extends MediaPipelineBaseTest {
 
 		Assert.assertNotSame("The URL shouldn't be empty", "", url);
 	}
+
 }

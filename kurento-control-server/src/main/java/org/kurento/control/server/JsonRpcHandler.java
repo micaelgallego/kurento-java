@@ -317,6 +317,9 @@ public final class JsonRpcHandler extends DefaultJsonRpcHandler<JsonObject> {
 
 			txManager.updateRequest(atomicRequest);
 
+			final Integer origId = atomicRequest.getId();
+			atomicRequest.setId(null);
+
 			try {
 
 				client.sendRequest(atomicRequest,
@@ -328,6 +331,8 @@ public final class JsonRpcHandler extends DefaultJsonRpcHandler<JsonObject> {
 								processIfSubscribeResponse(
 										transaction.getSession(),
 										atomicRequest, response.getResult());
+
+								response.setId(origId);
 								responses.add(response);
 								processTransactionOperations(transaction,
 										operations, responses, txManager);

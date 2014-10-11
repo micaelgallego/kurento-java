@@ -15,6 +15,7 @@
 package org.kurento.client.test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -62,6 +63,31 @@ public class TransactionTest extends KurentoClientTest {
 		// End explicit transaction
 
 		assertThat(url, is(fUrl.get()));
+	}
+
+	@Test
+	public void multipleTransactionTest() throws InterruptedException,
+			ExecutionException {
+
+		// Pipeline creation (transaction)
+		Transaction tx1 = kurentoClient.beginTransaction();
+		MediaPipeline pipeline = MediaPipeline.with(kurentoClient).create(tx1);
+		HttpGetEndpoint httpGetEndpoint = HttpGetEndpoint.with(pipeline)
+				.create(tx1);
+		Future<String> url1 = httpGetEndpoint.getUrl(tx1);
+		tx1.commit();
+		// End pipeline creation
+
+		// Pipeline creation (transaction)
+		Transaction tx2 = kurentoClient.beginTransaction();
+		MediaPipeline pipeline2 = MediaPipeline.with(kurentoClient).create(tx2);
+		HttpGetEndpoint httpGetEndpoint2 = HttpGetEndpoint.with(pipeline2)
+				.create(tx2);
+		Future<String> url2 = httpGetEndpoint2.getUrl(tx2);
+		tx2.commit();
+		// End pipeline creation
+
+		assertThat(url1.get(), is(not(url2.get())));
 	}
 
 	@Test

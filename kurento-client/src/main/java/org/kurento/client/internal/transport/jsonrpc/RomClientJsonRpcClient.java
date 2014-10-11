@@ -340,10 +340,13 @@ public class RomClientJsonRpcClient implements RomClient {
 		JsonArray opJsons = new JsonArray();
 		final List<RequestAndResponseType> opReqres = new ArrayList<>();
 
+		int numReq = 0;
 		for (Operation op : operations) {
 			RequestAndResponseType reqres = op.createRequest(this);
 			opReqres.add(reqres);
+			reqres.request.setId(numReq);
 			opJsons.add(JsonUtils.toJsonElement(reqres.request));
+			numReq++;
 		}
 
 		JsonObject params = new JsonObject();
