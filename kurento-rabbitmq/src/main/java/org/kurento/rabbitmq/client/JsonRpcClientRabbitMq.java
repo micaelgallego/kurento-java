@@ -71,36 +71,48 @@ public class JsonRpcClientRabbitMq extends JsonRpcClient {
 	}
 
 	public JsonRpcClientRabbitMq(RabbitMqManager rabbitMqManager) {
-
 		this.rabbitMqManager = rabbitMqManager;
-		this.rabbitMqManager.connect();
+	}
 
-		Queue queue = rabbitMqManager.declareClientQueue();
+	public void connect() throws IOException {
+		connectIfNecessary();
+	}
 
-		clientId = queue.getName();
+	private synchronized void connectIfNecessary() {
 
-		rabbitTemplate = rabbitMqManager.createClientTemplate();
+		if (clientId == null) {
 
-		this.rsHelper = new JsonRpcRequestSenderHelper() {
-			@Override
-			public <P, R> Response<R> internalSendRequest(Request<P> request,
-					Class<R> resultClass) throws IOException {
-				return internalSendRequestBroker(request, resultClass);
-			}
+			this.rabbitMqManager.connect();
 
-			@Override
-			protected void internalSendRequest(
-					Request<? extends Object> request,
-					Class<JsonElement> resultClass,
-					Continuation<Response<JsonElement>> continuation) {
-				internalSendRequestBroker(request, resultClass, continuation);
-			}
-		};
+			Queue queue = rabbitMqManager.declareClientQueue();
 
-		keepAliveManager = new KeepAliveManager(this,
-				KeepAliveManager.Mode.PER_ID_AS_MEDIAPIPELINE);
+			clientId = queue.getName();
 
-		keepAliveManager.start();
+			rabbitTemplate = rabbitMqManager.createClientTemplate();
+
+			this.rsHelper = new JsonRpcRequestSenderHelper() {
+				@Override
+				public <P, R> Response<R> internalSendRequest(
+						Request<P> request, Class<R> resultClass)
+						throws IOException {
+					return internalSendRequestBroker(request, resultClass);
+				}
+
+				@Override
+				protected void internalSendRequest(
+						Request<? extends Object> request,
+						Class<JsonElement> resultClass,
+						Continuation<Response<JsonElement>> continuation) {
+					internalSendRequestBroker(request, resultClass,
+							continuation);
+				}
+			};
+
+			keepAliveManager = new KeepAliveManager(this,
+					KeepAliveManager.Mode.PER_ID_AS_MEDIAPIPELINE);
+
+			keepAliveManager.start();
+		}
 	}
 
 	private void handleRequestFromServer(String message) {
@@ -115,6 +127,8 @@ public class JsonRpcClientRabbitMq extends JsonRpcClient {
 
 	public <P, R> Response<R> internalSendRequestBroker(Request<P> request,
 			Class<R> resultClass) {
+
+		connectIfNecessary();
 
 		long initTime = System.nanoTime();
 
@@ -251,6 +265,8 @@ public class JsonRpcClientRabbitMq extends JsonRpcClient {
 			final Request<? extends Object> request,
 			final Class<JsonElement> resultClass,
 			final Continuation<Response<JsonElement>> continuation) {
+
+		connectIfNecessary();
 
 		// FIXME: Poor man async implementation.
 		execService.submit(new Runnable() {

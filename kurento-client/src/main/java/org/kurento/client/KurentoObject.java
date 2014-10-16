@@ -6,7 +6,6 @@ import java.util.concurrent.Executor;
 
 import org.kurento.client.internal.ParamAnnotationUtils;
 import org.kurento.client.internal.TransactionImpl;
-import org.kurento.client.internal.client.ListenerSubscriptionImpl;
 import org.kurento.client.internal.client.RemoteObject;
 import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
@@ -15,10 +14,10 @@ import org.kurento.jsonrpc.Props;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractMediaObject {
+public class KurentoObject {
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(AbstractMediaObject.class);
+			.getLogger(KurentoObject.class);
 
 	private MediaPipeline internalMediaPipeline;
 	protected RemoteObjectFacade remoteObject;
@@ -29,14 +28,9 @@ public class AbstractMediaObject {
 
 	private Executor executor;
 
-	protected AbstractMediaObject(RemoteObjectFacade remoteObject,
-			Transaction tx) {
+	protected KurentoObject(RemoteObjectFacade remoteObject, Transaction tx) {
 		setRemoteObject(remoteObject);
 		this.tx = (TransactionImpl) tx;
-	}
-
-	public Transaction getActiveTransaction() {
-		return tx;
 	}
 
 	void setInternalMediaPipeline(MediaPipeline internalMediaPipeline) {
@@ -47,11 +41,11 @@ public class AbstractMediaObject {
 		return internalMediaPipeline;
 	}
 
-	public boolean isReady() {
+	public boolean isCommited() {
 		return remoteObject instanceof RemoteObject;
 	}
 
-	public void waitReady() throws InterruptedException {
+	public void waitCommited() throws InterruptedException {
 		createReadyLatchIfNecessary();
 		readyLatch.await();
 	}
@@ -66,21 +60,21 @@ public class AbstractMediaObject {
 		}
 	}
 
-	public synchronized void whenReady(Continuation<?> continuation) {
-		whenReady(continuation, null);
+	public synchronized void whenCommited(Continuation<?> continuation) {
+		whenCommited(continuation, null);
 	}
 
 	@SuppressWarnings("unchecked")
-	public synchronized void whenReady(Continuation<?> continuation,
+	public synchronized void whenCommited(Continuation<?> continuation,
 			Executor executor) {
 		this.whenContinuation = (Continuation<Object>) continuation;
 		this.executor = executor;
-		if (isReady()) {
-			execWhenReady();
+		if (isCommited()) {
+			execWhenCommited();
 		}
 	}
 
-	private void execWhenReady() {
+	private void execWhenCommited() {
 		if (executor == null) {
 			// TODO Propagate error if object is not ready for error
 			try {
@@ -113,15 +107,14 @@ public class AbstractMediaObject {
 			readyLatch.countDown();
 			if (whenContinuation != null) {
 				// TODO Propagate error if object is not ready for error
-				execWhenReady();
+				execWhenCommited();
 			}
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	protected ListenerSubscription subscribeEventListener(
 			final EventListener<?> clientListener,
-			final Class<? extends Event> eventClass, Continuation<?> cont) {
+			final Class<? extends Event> eventClass) {
 
 		String eventName = eventClass.getSimpleName().substring(0,
 				eventClass.getSimpleName().length() - "Event".length());
@@ -129,18 +122,12 @@ public class AbstractMediaObject {
 		RemoteObject.RemoteObjectEventListener listener = new RemoteObject.RemoteObjectEventListener() {
 			@Override
 			public void onEvent(String eventType, Props data) {
-				propagateEventTo(AbstractMediaObject.this, eventClass, data,
+				propagateEventTo(KurentoObject.this, eventClass, data,
 						clientListener);
 			}
 		};
 
-		if (cont != null) {
-			remoteObject.addEventListener(eventName, listener,
-					(Continuation<ListenerSubscriptionImpl>) cont);
-			return null;
-		} else {
-			return remoteObject.addEventListener(eventName, listener);
-		}
+		return remoteObject.addEventListener(eventName, listener);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -205,7 +192,7 @@ public class AbstractMediaObject {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		AbstractMediaObject other = (AbstractMediaObject) obj;
+		KurentoObject other = (KurentoObject) obj;
 		if (remoteObject == null) {
 			if (other.remoteObject != null) {
 				return false;
@@ -223,31 +210,19 @@ public class AbstractMediaObject {
 	 *
 	 **/
 	public void release() {
-		release((Continuation<?>) null);
+		remoteObject.release();
 	}
 
-	/**
-	 *
-	 * Explicitly release a media object form memory. All of its children will
-	 * also be released. Asynchronous call.
-	 *
-	 * @param continuation
-	 *            {@link #onSuccess(void)} will be called when the actions
-	 *            complete. {@link #onError} will be called if there is an
-	 *            exception.
-	 *
-	 **/
-	@SuppressWarnings("unchecked")
-	public Object release(Continuation<?> cont) {
-		if (cont != null) {
-			remoteObject.release((Continuation<Void>) cont);
-		} else {
-			remoteObject.release();
-		}
-		return null;
+	public void release(Continuation<Void> continuation) {
+		remoteObject.release(continuation);
+
 	}
 
 	public void release(Transaction tx) {
 		((TransactionImpl) tx).addOperation(new ReleaseOperation(this));
+	}
+
+	public Transaction getCreationTransaction() {
+		return tx;
 	}
 }

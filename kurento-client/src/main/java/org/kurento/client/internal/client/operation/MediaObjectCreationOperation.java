@@ -1,8 +1,8 @@
 package org.kurento.client.internal.client.operation;
 
-import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.Continuation;
 import org.kurento.client.InternalInfoGetter;
+import org.kurento.client.KurentoObject;
 import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.RemoteObject;
 import org.kurento.client.internal.client.RemoteObjectFacade;
@@ -15,10 +15,10 @@ public class MediaObjectCreationOperation extends Operation {
 
 	public String className;
 	public Props constructorParams;
-	public AbstractMediaObject mediaObject;
+	public KurentoObject mediaObject;
 
 	public MediaObjectCreationOperation(String className,
-			Props constructorParams, AbstractMediaObject mediaObject) {
+			Props constructorParams, KurentoObject mediaObject) {
 		this.className = className;
 		this.constructorParams = constructorParams;
 		this.mediaObject = mediaObject;

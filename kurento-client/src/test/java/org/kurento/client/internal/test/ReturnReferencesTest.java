@@ -1,15 +1,10 @@
 package org.kurento.client.internal.test;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.Assert.assertEquals;
-
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kurento.client.Continuation;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.test.model.client.SampleClass;
 import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient;
@@ -54,22 +49,7 @@ public class ReturnReferencesTest {
 		final SampleClass obj2 = SampleClass.with("BBB", false, manager)
 				.withAtt3(0.5f).withAtt4(22).create();
 
-		final BlockingQueue<SampleClass> queue = new ArrayBlockingQueue<>(1);
-
-		obj.echoObjectRef(obj2, new Continuation<SampleClass>() {
-
-			@Override
-			public void onSuccess(SampleClass obj3) {
-				queue.add(obj3);
-			}
-
-			@Override
-			public void onError(Throwable cause) {
-
-			}
-		});
-
-		SampleClass obj3 = queue.poll(500, MILLISECONDS);
+		SampleClass obj3 = obj.echoObjectRef(obj2);
 
 		Assert.assertNotNull(obj3);
 

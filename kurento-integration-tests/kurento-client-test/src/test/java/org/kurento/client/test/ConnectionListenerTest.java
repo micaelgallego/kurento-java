@@ -16,6 +16,7 @@ package org.kurento.client.test;
 
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +38,8 @@ public class ConnectionListenerTest {
 			.getLogger(ConnectionListenerTest.class);
 
 	@Test
-	public void disconnectionEventTest() throws InterruptedException {
+	public void disconnectionEventTest() throws InterruptedException,
+			IOException {
 
 		KurentoMediaServerManager kms = KurentoServicesTestHelper
 				.startKurentoMediaServer();

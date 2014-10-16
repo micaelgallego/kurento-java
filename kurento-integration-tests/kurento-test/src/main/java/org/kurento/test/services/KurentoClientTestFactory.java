@@ -11,6 +11,7 @@ import static org.kurento.test.services.KurentoServicesTestHelper.KMS_TRANSPORT_
 import static org.kurento.test.services.KurentoServicesTestHelper.KMS_WS_URI_DEFAULT;
 import static org.kurento.test.services.KurentoServicesTestHelper.KMS_WS_URI_PROP;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.security.InvalidParameterException;
 
@@ -28,12 +29,12 @@ public class KurentoClientTestFactory {
 	private static final Logger log = LoggerFactory
 			.getLogger(KurentoClientTestFactory.class);
 
-	public static KurentoClient createKurentoForTest() {
+	public static KurentoClient createKurentoForTest() throws IOException {
 		return createKurentoForTest(null);
 	}
 
 	public static KurentoClient createKurentoForTest(
-			KurentoConnectionListener listener) {
+			KurentoConnectionListener listener) throws IOException {
 		return KurentoClient.createFromJsonRpcClient(createJsonRpcClient(
 				"client", listener));
 	}
@@ -129,7 +130,8 @@ public class KurentoClientTestFactory {
 		}
 	}
 
-	public static KurentoClient createWithJsonRpcClient(JsonRpcClient client) {
+	public static KurentoClient createWithJsonRpcClient(JsonRpcClient client)
+			throws IOException {
 		return KurentoClient.createFromJsonRpcClient(client);
 	}
 

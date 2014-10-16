@@ -7,7 +7,7 @@ package org.kurento.client;
 
 import org.kurento.client.internal.RemoteClass;
 import org.kurento.client.internal.TransactionImpl;
-import org.kurento.client.internal.client.NonReadyRemoteObject;
+import org.kurento.client.internal.client.NonCommitedRemoteObject;
 import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
 
@@ -23,22 +23,9 @@ public class MediaPipeline extends MediaObject {
 
 	private RomManager manager;
 
-	// public MediaPipeline(RomManager manager) {
-	// this(manager, new TransactionImpl(manager));
-	// }
-
-	// private MediaPipeline(RomManager manager, TransactionImpl tx) {
-	// super(new NonReadyRemoteObject(tx.nextObjectRef(), null,
-	// NonReadyMode.CREATION), tx);
-	// this.setInternalMediaPipeline(this);
-	// this.tx.addOperation(new MediaPipelineCreationOperation(this));
-	// ((NonReadyRemoteObject) remoteObject).setPublicObject(this);
-	// this.manager = manager;
-	// }
-
 	public MediaPipeline(RemoteObjectFacade remoteObject, Transaction tx) {
 		super(remoteObject, tx);
-		if (!(remoteObject instanceof NonReadyRemoteObject)) {
+		if (!(remoteObject instanceof NonCommitedRemoteObject)) {
 			manager = remoteObject.getRomManager();
 		}
 	}
@@ -49,14 +36,10 @@ public class MediaPipeline extends MediaObject {
 
 	synchronized void setRemoteObject(RemoteObjectFacade remoteObject) {
 		super.setRemoteObject(remoteObject);
-		if (!(remoteObject instanceof NonReadyRemoteObject)) {
+		if (!(remoteObject instanceof NonCommitedRemoteObject)) {
 			manager = remoteObject.getRomManager();
 		}
 	}
-
-	// void addOperation(Operation operation) {
-	// tx.addOperation(operation);
-	// }
 
 	public static class Builder extends AbstractBuilder<MediaPipeline> {
 

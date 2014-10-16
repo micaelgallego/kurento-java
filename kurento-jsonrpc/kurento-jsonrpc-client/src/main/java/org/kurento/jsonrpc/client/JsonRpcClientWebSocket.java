@@ -346,4 +346,9 @@ public class JsonRpcClientWebSocket extends JsonRpcClient {
 	public WebSocketSession getWebSocketSession() {
 		return wsSession;
 	}
+
+	@Override
+	public void connect() throws IOException {
+		connectIfNecessary();
+	}
 }

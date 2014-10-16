@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import org.kurento.client.AbstractBuilder;
-import org.kurento.client.AbstractMediaObject;
+import org.kurento.client.KurentoObject;
 import org.kurento.client.Transaction;
 import org.kurento.client.internal.RemoteClass;
 import org.kurento.client.internal.TransactionImpl;
@@ -16,7 +16,7 @@ import org.kurento.jsonrpc.Props;
 import com.google.common.reflect.TypeToken;
 
 @RemoteClass
-public class SampleRemoteClass extends AbstractMediaObject {
+public class SampleRemoteClass extends KurentoObject {
 
 	public SampleRemoteClass(RemoteObjectFacade remoteObject) {
 		super(remoteObject, null);

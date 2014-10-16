@@ -161,7 +161,8 @@ public class TransactionTest extends KurentoClientTest {
 	}
 
 	@Test
-	public void isReadyTest() throws InterruptedException, ExecutionException {
+	public void isCommitedTest() throws InterruptedException,
+			ExecutionException {
 
 		Transaction tx = kurentoClient.beginTransaction();
 
@@ -175,11 +176,11 @@ public class TransactionTest extends KurentoClientTest {
 
 		player.connect(tx, httpGetEndpoint);
 
-		assertThat(player.isReady(), is(false));
+		assertThat(player.isCommited(), is(false));
 
 		tx.commit();
 
-		assertThat(player.isReady(), is(true));
+		assertThat(player.isCommited(), is(true));
 	}
 
 	@Test
@@ -204,11 +205,12 @@ public class TransactionTest extends KurentoClientTest {
 
 		async.waitForResult();
 
-		assertThat(pipeline.isReady(), is(true));
+		assertThat(pipeline.isCommited(), is(true));
 	}
 
 	@Test
-	public void waitReadyTest() throws InterruptedException, ExecutionException {
+	public void waitCommitedTest() throws InterruptedException,
+			ExecutionException {
 
 		// Pipeline creation (transaction)
 
@@ -229,7 +231,7 @@ public class TransactionTest extends KurentoClientTest {
 		new Thread() {
 			public void run() {
 				try {
-					player.waitReady();
+					player.waitCommited();
 					readyLatch.countDown();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -247,7 +249,8 @@ public class TransactionTest extends KurentoClientTest {
 	}
 
 	@Test
-	public void whenReadyTest() throws InterruptedException, ExecutionException {
+	public void whenCommitedTest() throws InterruptedException,
+			ExecutionException {
 
 		// Pipeline creation (transaction)
 
@@ -264,9 +267,9 @@ public class TransactionTest extends KurentoClientTest {
 		player.connect(tx, httpGetEndpoint);
 
 		AsyncResultManager<PlayerEndpoint> async = new AsyncResultManager<>(
-				"whenReady");
+				"whenCommited");
 
-		player.whenReady(async.getContinuation());
+		player.whenCommited(async.getContinuation());
 
 		tx.commit();
 
@@ -315,5 +318,32 @@ public class TransactionTest extends KurentoClientTest {
 		System.out.println(fRPipelineGet);
 
 		assertThat(rPipeline, is(fRPipelineGet));
+	}
+
+	@Test
+	public void asyncCommit() throws InterruptedException, ExecutionException {
+
+		// Pipeline creation (transaction)
+
+		Transaction tx = kurentoClient.beginTransaction();
+
+		MediaPipeline pipeline = MediaPipeline.with(kurentoClient).create(tx);
+
+		final PlayerEndpoint player = PlayerEndpoint.with(pipeline,
+				"http://files.kurento.org/video/small.webm").create(tx);
+
+		HttpGetEndpoint httpGetEndpoint = HttpGetEndpoint.with(pipeline)
+				.create(tx);
+
+		player.connect(tx, httpGetEndpoint);
+
+		AsyncResultManager<Void> async = new AsyncResultManager<>("commit");
+
+		tx.commit(async.getContinuation());
+
+		async.waitForResult();
+
+		assertThat(player.isCommited(), is(true));
+
 	}
 }

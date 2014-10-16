@@ -35,7 +35,7 @@ import com.google.gson.JsonObject;
  * with server events. This protocol can be implemented with two transport
  * types: Websockets or http (for request-response) and long-pooling for server
  * events.
- * 
+ *
  * Request: The request is a JSON with the following fields:
  * <ul>
  * <li>method: Name of the operation to be executed in the server</li>
@@ -44,14 +44,14 @@ import com.google.gson.JsonObject;
  * identify the response if it cannot be identified by means of underlying
  * transport.</li>
  * </ul>
- * 
+ *
  * Response: The response is a JSON with the following fields:
  * <ul>
  * <li>result: Result of the operation.</li>
  * <li>error: This field is used if operation generates an error.</li>
  * <li>id: request id</li>
  * </ul>
- * 
+ *
  * @author Micael Gallego (micael.gallego@gmail.com)
  */
 public abstract class JsonRpcClient implements JsonRpcRequestSender, Closeable {
@@ -142,5 +142,7 @@ public abstract class JsonRpcClient implements JsonRpcRequestSender, Closeable {
 	public void setKeepAliveManager(KeepAliveManager keepAliveManager) {
 		this.keepAliveManager = keepAliveManager;
 	}
+
+	public abstract void connect() throws IOException;
 
 }

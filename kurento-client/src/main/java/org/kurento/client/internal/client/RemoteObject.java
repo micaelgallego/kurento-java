@@ -3,8 +3,8 @@ package org.kurento.client.internal.client;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.Continuation;
+import org.kurento.client.KurentoObject;
 import org.kurento.client.TransactionNotExecutedException;
 import org.kurento.client.internal.transport.serialization.ParamsFlattener;
 import org.kurento.jsonrpc.Prop;
@@ -35,7 +35,7 @@ public class RemoteObject implements RemoteObjectFacade {
 	// RemoteObject is used with a Typed wrapper (with reflexion, with code
 	// generation or by hand). In this cases, the object reference is unflatten
 	// to this value instead of RemoteObject itself.
-	private AbstractMediaObject wrapperForUnflatten;
+	private KurentoObject publicObject;
 
 	private final Multimap<String, RemoteObjectEventListener> listeners = Multimaps
 			.synchronizedMultimap(ArrayListMultimap
@@ -51,13 +51,13 @@ public class RemoteObject implements RemoteObjectFacade {
 	}
 
 	@Override
-	public AbstractMediaObject getPublicObject() {
-		return wrapperForUnflatten;
+	public KurentoObject getPublicObject() {
+		return publicObject;
 	}
 
 	@Override
-	public void setPublicObject(AbstractMediaObject wrapperForUnflatten) {
-		this.wrapperForUnflatten = wrapperForUnflatten;
+	public void setPublicObject(KurentoObject wrapperForUnflatten) {
+		this.publicObject = wrapperForUnflatten;
 	}
 
 	@Override
@@ -88,8 +88,8 @@ public class RemoteObject implements RemoteObjectFacade {
 	}
 
 	private void checkParam(Object param) {
-		if (param instanceof AbstractMediaObject) {
-			checkMediaObject((AbstractMediaObject) param);
+		if (param instanceof KurentoObject) {
+			checkMediaObject((KurentoObject) param);
 		} else if (param instanceof List) {
 			for (Object elem : ((List<?>) param)) {
 				checkParam(elem);
@@ -101,44 +101,15 @@ public class RemoteObject implements RemoteObjectFacade {
 		}
 	}
 
-	private void checkMediaObject(AbstractMediaObject mediaObject) {
-		if (!mediaObject.isReady()) {
+	private void checkMediaObject(KurentoObject mediaObject) {
+		if (!mediaObject.isCommited()) {
 			throw new TransactionNotExecutedException();
 		}
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
-	public void invoke(String method, Props params, final Type type,
-			final Continuation cont) {
-
-		Type flattenType = FLATTENER.calculateFlattenType(type);
-
-		manager.invoke(objectRef, method, params, flattenType,
-				new DefaultContinuation<Object>(cont) {
-					@SuppressWarnings("unchecked")
-					@Override
-					public void onSuccess(Object result) {
-						try {
-							cont.onSuccess(FLATTENER.unflattenValue("return",
-									type, result, manager));
-						} catch (Exception e) {
-							log.warn(
-									"[Continuation] error invoking onSuccess implemented by client",
-									e);
-						}
-					}
-				});
-	}
-
-	@Override
 	public void release() {
 		manager.release(objectRef);
-	}
-
-	@Override
-	public void release(final Continuation<Void> cont) {
-		manager.release(objectRef, cont);
 	}
 
 	@Override
@@ -233,6 +204,11 @@ public class RemoteObject implements RemoteObjectFacade {
 	@Override
 	public RomManager getRomManager() {
 		return manager;
+	}
+
+	@Override
+	public void release(Continuation<Void> continuation) {
+		manager.release(objectRef, continuation);
 	}
 
 }

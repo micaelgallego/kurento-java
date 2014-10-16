@@ -14,6 +14,8 @@
  */
 package org.kurento.client.factory;
 
+import java.io.IOException;
+
 import javax.annotation.PreDestroy;
 
 import org.kurento.client.MediaPipeline;
@@ -35,8 +37,12 @@ public class KurentoClient {
 	}
 
 	public static KurentoClient create(String websocketUrl) {
-		return new KurentoClient(
-				org.kurento.client.KurentoClient.create(websocketUrl));
+		try {
+			return new KurentoClient(
+					org.kurento.client.KurentoClient.create(websocketUrl));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@PreDestroy
@@ -47,7 +53,7 @@ public class KurentoClient {
 	@Deprecated
 	public MediaPipeline createMediaPipeline() {
 		MediaPipeline pipeline = MediaPipeline.with(kurentoClient).create();
-		 
+
 		return pipeline;
 	}
 }

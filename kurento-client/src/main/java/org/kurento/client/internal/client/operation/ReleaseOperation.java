@@ -1,17 +1,17 @@
 package org.kurento.client.internal.client.operation;
 
-import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.Continuation;
 import org.kurento.client.InternalInfoGetter;
+import org.kurento.client.KurentoObject;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient;
 import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient.RequestAndResponseType;
 
 public class ReleaseOperation extends Operation {
 
-	private AbstractMediaObject mediaObject;
+	private KurentoObject mediaObject;
 
-	public ReleaseOperation(AbstractMediaObject mediaObject) {
+	public ReleaseOperation(KurentoObject mediaObject) {
 		this.mediaObject = mediaObject;
 	}
 

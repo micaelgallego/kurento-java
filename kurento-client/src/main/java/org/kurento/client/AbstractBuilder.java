@@ -6,9 +6,7 @@
 package org.kurento.client;
 
 import org.kurento.client.internal.TransactionImpl;
-import org.kurento.client.internal.client.DefaultContinuation;
-import org.kurento.client.internal.client.NonReadyRemoteObject;
-import org.kurento.client.internal.client.NonReadyRemoteObject.NonReadyMode;
+import org.kurento.client.internal.client.NonCommitedRemoteObject;
 import org.kurento.client.internal.client.RemoteObjectFacade;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.client.operation.MediaObjectCreationOperation;
@@ -25,7 +23,7 @@ import org.kurento.jsonrpc.Props;
  *            the type of object to build
  *
  **/
-public abstract class AbstractBuilder<T extends AbstractMediaObject> {
+public abstract class AbstractBuilder<T extends KurentoObject> {
 
 	protected final Props props;
 	private RomManager manager;
@@ -51,102 +49,43 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 	 *
 	 **/
 	public T create() {
-		return internalCreate(null);
-	}
 
-	/**
-	 * Builds an object asynchronously using the builder design pattern.
-	 *
-	 * The continuation will have {@link Continuation#onSuccess} called when the
-	 * object is ready, or {@link Continuation#onError} if an error occurs
-	 *
-	 * @param continuation
-	 *            will be called when the object is built
-	 *
-	 *
-	 **/
-	public void create(final Continuation<T> continuation) {
-		internalCreate(continuation);
-	}
-
-	private T internalCreate(final Continuation<T> continuation) {
-
-		final AbstractMediaObject constObject = obtainConstructorObject();
-
-		T mediaObject;
-
-		DefaultContinuation<RemoteObjectFacade> defaultContinuation = new DefaultContinuation<RemoteObjectFacade>(
-				continuation) {
-			@Override
-			public void onSuccess(RemoteObjectFacade remoteObject) {
-				try {
-					T newMediaObject = createMediaObjectConst(constObject,
-							remoteObject, null);
-					continuation.onSuccess(newMediaObject);
-				} catch (Exception e) {
-					log.warn(
-							"[Continuation] error invoking onSuccess implemented by client",
-							e);
-				}
-			}
-		};
-
-		// if (constObject == null || constObject.isReady()) {
+		KurentoObject constObject = obtainConstructorObject();
 
 		if (manager == null && constObject != null) {
 			manager = constObject.getRomManager();
 		}
 
-		if (continuation == null) {
+		RemoteObjectFacade remoteObject = manager.create(clazz.getSimpleName(),
+				props);
 
-			RemoteObjectFacade remoteObject = manager.create(
-					clazz.getSimpleName(), props);
+		return createMediaObjectConst(constObject, remoteObject, null);
+	}
 
-			mediaObject = createMediaObjectConst(constObject, remoteObject,
-					null);
+	public T create(Transaction transaction) {
 
-		} else {
+		TransactionImpl tx = (TransactionImpl) transaction;
 
-			manager.create(clazz.getSimpleName(), props, defaultContinuation);
+		NonCommitedRemoteObject remoteObject = new NonCommitedRemoteObject(
+				tx.nextObjectRef(), tx);
 
-			return null;
-		}
+		KurentoObject constObject = obtainConstructorObject();
 
-		// } else {
-		//
-		// MediaPipeline pipeline = constObject.getInternalMediaPipeline();
-		//
-		// TransactionImpl tx = (TransactionImpl) pipeline
-		// .getActiveTransaction();
-		//
-		// NonReadyRemoteObject remoteObject = new NonReadyRemoteObject(
-		// tx.nextObjectRef(), pipeline, NonReadyMode.CREATION);
-		//
-		// mediaObject = createMediaObjectConst(constObject, remoteObject,
-		// pipeline.getActiveTransaction());
-		//
-		// if (continuation != null) {
-		// try {
-		// continuation.onSuccess(mediaObject);
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		// }
-		//
-		// MediaObjectCreationOperation op = new MediaObjectCreationOperation(
-		// clazz.getSimpleName(), props, mediaObject);
-		//
-		// pipeline.addOperation(op);
-		// }
+		T mediaObject = createMediaObjectConst(constObject, remoteObject, tx);
+
+		MediaObjectCreationOperation op = new MediaObjectCreationOperation(
+				clazz.getSimpleName(), props, mediaObject);
+
+		tx.addOperation(op);
 
 		return mediaObject;
 	}
 
 	@SuppressWarnings("unchecked")
-	private T createMediaObjectConst(AbstractMediaObject constObject,
+	private T createMediaObjectConst(KurentoObject constObject,
 			RemoteObjectFacade remoteObject, Transaction tx) {
 
-		AbstractMediaObject mediaObject = createMediaObject(remoteObject, tx);
+		KurentoObject mediaObject = createMediaObject(remoteObject, tx);
 
 		if (constObject != null) {
 			mediaObject.setInternalMediaPipeline(constObject
@@ -156,60 +95,17 @@ public abstract class AbstractBuilder<T extends AbstractMediaObject> {
 		return (T) mediaObject;
 	}
 
-	private AbstractMediaObject obtainConstructorObject() {
+	private KurentoObject obtainConstructorObject() {
 
-		AbstractMediaObject rootObject = null;
+		KurentoObject rootObject = null;
 		for (Prop prop : props) {
 			Object value = prop.getValue();
 			if (value instanceof MediaPipeline || value instanceof Hub) {
-				rootObject = (AbstractMediaObject) value;
+				rootObject = (KurentoObject) value;
 				break;
 			}
 		}
 		return rootObject;
-	}
-
-	public T create(Transaction transaction) {
-
-		TransactionImpl tx = (TransactionImpl) transaction;
-
-		final AbstractMediaObject constObject = obtainConstructorObject();
-
-		T mediaObject = null;
-
-		// if (constObject != null) {
-
-		// MediaPipeline pipeline = constObject.getInternalMediaPipeline();
-
-		NonReadyRemoteObject remoteObject = new NonReadyRemoteObject(
-				tx.nextObjectRef(), tx, NonReadyMode.TRANSACTION);
-
-		mediaObject = createMediaObjectConst(constObject, remoteObject, tx);
-
-		MediaObjectCreationOperation op = new MediaObjectCreationOperation(
-				clazz.getSimpleName(), props, mediaObject);
-
-		tx.addOperation(op);
-
-		// } else {
-		//
-		// NonReadyRemoteObject remoteObject = new NonReadyRemoteObject(
-		// tx.nextObjectRef(), null, NonReadyMode.TRANSACTION);
-		//
-		// MediaPipeline mediaPipeline = createMediaObjectConst(null,
-		// remoteObject, tx);
-		//
-		// MediaPipelineCreationOperation op = new
-		// MediaPipelineCreationOperation(
-		// mediaPipeline);
-		//
-		// tx.addOperation(op);
-		//
-		// mediaObject = (T) mediaPipeline;
-		//
-		// }
-
-		return mediaObject;
 	}
 
 	@Deprecated

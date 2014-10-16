@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.kurento.client.AbstractMediaObject;
+import org.kurento.client.KurentoObject;
 import org.kurento.client.InternalInfoGetter;
 import org.kurento.client.internal.ParamAnnotationUtils;
 import org.kurento.client.internal.RemoteClass;
@@ -118,10 +118,10 @@ public class ParamsFlattener {
 		}
 
 		Object processedParam;
-		if (param instanceof AbstractMediaObject) {
+		if (param instanceof KurentoObject) {
 
 			processedParam = InternalInfoGetter.getRemoteObject(
-					(AbstractMediaObject) param).getObjectRef();
+					(KurentoObject) param).getObjectRef();
 
 			// } else if (param instanceof Proxy) {
 			//

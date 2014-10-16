@@ -4,22 +4,16 @@ import org.kurento.client.internal.client.RemoteObjectFacade;
 
 public class InternalInfoGetter {
 
-	public static RemoteObjectFacade getRemoteObject(
-			AbstractMediaObject mediaObject) {
+	public static RemoteObjectFacade getRemoteObject(KurentoObject mediaObject) {
 		return mediaObject.getRemoteObject();
 	}
 
 	public static MediaPipeline getInternalMediaPipeline(
-			AbstractMediaObject mediaObject) {
+			KurentoObject mediaObject) {
 		return mediaObject.getInternalMediaPipeline();
 	}
 
-	// public static void addOperation(MediaPipeline mediaPipeline,
-	// Operation operation) {
-	// mediaPipeline.addOperation(operation);
-	// }
-
-	public static void setRemoteObject(AbstractMediaObject mediaObject,
+	public static void setRemoteObject(KurentoObject mediaObject,
 			RemoteObjectFacade remoteObject) {
 		mediaObject.setRemoteObject(remoteObject);
 	}

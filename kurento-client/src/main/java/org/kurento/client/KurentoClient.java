@@ -14,6 +14,8 @@
  */
 package org.kurento.client;
 
+import java.io.IOException;
+
 import javax.annotation.PreDestroy;
 
 import org.kurento.client.internal.TransactionImpl;
@@ -33,12 +35,12 @@ public class KurentoClient {
 
 	protected RomManager manager;
 
-	public static KurentoClient create(String websocketUrl) {
+	public static KurentoClient create(String websocketUrl) throws IOException {
 		return new KurentoClient(new JsonRpcClientWebSocket(websocketUrl));
 	}
 
 	public static KurentoClient create(String websocketUrl,
-			KurentoConnectionListener listener) {
+			KurentoConnectionListener listener) throws IOException {
 		return new KurentoClient(new JsonRpcClientWebSocket(websocketUrl,
 				JsonRpcConnectionListenerKurento.create(listener)));
 	}
@@ -48,7 +50,8 @@ public class KurentoClient {
 		manager.destroy();
 	}
 
-	KurentoClient(JsonRpcClient client) {
+	KurentoClient(JsonRpcClient client) throws IOException {
+		client.connect();
 		this.manager = new RomManager(new RomClientJsonRpcClient(client));
 	}
 
@@ -61,7 +64,7 @@ public class KurentoClient {
 	}
 
 	public static KurentoClient createFromJsonRpcClient(
-			JsonRpcClient jsonRpcClient) {
+			JsonRpcClient jsonRpcClient) throws IOException {
 		return new KurentoClient(jsonRpcClient);
 	}
 

@@ -2,9 +2,9 @@ package org.kurento.client.internal.client.operation;
 
 import java.lang.reflect.Type;
 
-import org.kurento.client.AbstractMediaObject;
 import org.kurento.client.Continuation;
 import org.kurento.client.InternalInfoGetter;
+import org.kurento.client.KurentoObject;
 import org.kurento.client.internal.client.DefaultContinuation;
 import org.kurento.client.internal.client.RomManager;
 import org.kurento.client.internal.transport.jsonrpc.RomClientJsonRpcClient;
@@ -16,13 +16,13 @@ public class InvokeOperation extends Operation {
 
 	private static ParamsFlattener FLATTENER = ParamsFlattener.getInstance();
 
-	private AbstractMediaObject object;
+	private KurentoObject object;
 	private String method;
 	private Props params;
 	private Type returnType;
 
-	public InvokeOperation(AbstractMediaObject object, String method,
-			Props params, Type returnType) {
+	public InvokeOperation(KurentoObject object, String method, Props params,
+			Type returnType) {
 		super();
 		this.object = object;
 		this.method = method;
